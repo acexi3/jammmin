@@ -7,5 +7,6 @@ export default function Hero() {
             <h1>Looking for Music?</h1>
             <p>Create or otherwise manipulate your Spotify playlists, here!</p>
         </div>
+        
     );
 };

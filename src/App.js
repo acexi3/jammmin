@@ -5,10 +5,10 @@ import {
   Route
 } from 'react-router-dom';
 
-import logo from './logo.svg';
+//import logo from './logo.svg';
 //import './App.css';
-import NavBar from './components/NavBar/NavBar';
-import Hero from './components/Hero/Hero';
+//import NavBar from './components/NavBar/NavBar';
+//import Hero from './components/Hero/Hero';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
 
