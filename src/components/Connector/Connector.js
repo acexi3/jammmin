@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './Connector.css';
+
+// Generate the token as a random string... but shouldn't this come from Spotify?
 
 function generateRandomString(length) {
     const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -11,6 +13,14 @@ function generateRandomString(length) {
     }
     return result;
  };
+
+// Pops up user login for Spotify in order to access and manipulate playlists
+// 1. using my client ID from the Spotify web app in my Spotify dev profile
+// 2. create the STATE using the random string generator function above
+// 3. creating a stateKey to match with the generated STATE and storing it in local browser storage
+// 4. defining the scope of the connection to Spotify API -- defining what the user can do in the app
+// 5. constructing the authorization URL
+
 
 var CLIENT_ID = '06a0796f96084b688f70432ded3692e0';
 var REDIRECT_AFTER_LOGIN = 'http://localhost:3000';
@@ -28,19 +38,48 @@ var AUTH_URL = 'https://accounts.spotify.com/authorize';
     AUTH_URL += '&redirect_uri=' + encodeURIComponent(REDIRECT_AFTER_LOGIN);
     AUTH_URL += '&state=' + encodeURIComponent(STATE);
 
-console.log(AUTH_URL);
-console.log(localStorage.stateKey.value);
+    console.log(AUTH_URL);
 
-export default function Connector() {   
-    
-    const handleLogin = () => {
-        window.location = AUTH_URL;
+// Get the token value from the returned URL after the connection with Spotify API
+// http://localhost:3000/#access_token=BQArAY-2FL_kAxPSM6nu3uAIKu65iYWz8reCx29I-APiFBLr-Ix1qskujrSnhiSoMcvnJr9Lunuy-EJidRRoyGKt0du4HUl-F_w2xQqcOyt97sCUzWhsUcVhf6jnVnctPISaByEcVlJcov0MMzeB32pZG1U0SRaU3D2hCp98lqEvnGj5kKXtwKmSHkILi93oUQIpVVfIAhkzW1tYaNzdXBHLpgQGLDmONAGzPUcpB07EFmRKPw7Wcg_BnYBDw4MHCQBu6KNXBo_-cQ&token_type=Bearer&expires_in=3600&state=BMolC0DgMqI3zk4V
+
+    const getReturnedParamFromSpotifyAuth = (hash) => {
+        const stringAfterHashtag = hash.substring(1);
+        const paramsInUrl = stringAfterHashtag.split("&");
+        const paramsSplitUp = paramsInUrl.reduce((accumulator, currentValue) => {
+            console.log(currentValue);
+            const [key, value] = currentValue.split("=");
+            accumulator[key] = value;
+            return accumulator;
+        }, {});
+        
+        return paramsSplitUp;
     };
 
-    return (
-        <div className="Connector">
-            <h1>Connect me to my Spotify!</h1>
-            <button onClick={handleLogin}>LOGIN</button>
-        </div>
-    );
+    export default function Connector() {   
+    
+        useEffect(() => {
+            if (AUTH_URL) {
+                const object = getReturnedParamFromSpotifyAuth(AUTH_URL);
+                console.log({ object });
+            }
+        });
+        
+        const handleLogin = () => {
+            window.location = AUTH_URL;
+        };
+
+        return (
+            <div className="Connector">
+                {/*<h1>Connect me to my Spotify!</h1>*/}
+                <button onClick={handleLogin}>Connect me to my Spotify!</button>
+            </div>
+        );
 };
+
+
+
+
+
+
+

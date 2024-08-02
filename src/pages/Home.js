@@ -7,7 +7,7 @@ export default function Home() {
         <>
             <NavBar />
             <div>
-                <div className="App">    
+                <div className="Home">    
                     {/*<img src={logo} className="App-logo" alt="logo" />*/}
                     <Hero />
                     <Connector /> 
