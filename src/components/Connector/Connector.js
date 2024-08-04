@@ -89,7 +89,7 @@ var AUTH_URL = 'https://accounts.spotify.com/authorize';
         
         return (
             <div className="Connector">
-                <button onClick={() => window.location.href = AUTH_URL }>Connect me to my Spotify!</button>
+                <button onClick={() => window.open(AUTH_URL, '_blank') }>Connect me to my Spotify!</button>
             </div>
         );
 };
