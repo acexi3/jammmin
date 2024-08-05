@@ -2,6 +2,7 @@ import React from 'react';
 import Connector from '../Connector/Connector';
 import SearchBar from '../SearchBar/SearchBar';
 import './Hero.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function Hero() {
     return (
@@ -11,6 +12,5 @@ export default function Hero() {
             <Connector /> 
             <SearchBar />
         </div>
-        
     );
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import NavBar from '../components/NavBar/NavBar';
 import Hero from '../components/Hero/Hero';
+import Tracklist from '../components/Tracklist/Tracklist';
 
 export default function Home() {
     return (
@@ -8,8 +9,10 @@ export default function Home() {
             <NavBar />
             <div>
                 <div className="Home">    
-                    {/*<img src={logo} className="App-logo" alt="logo" />*/}
                     <Hero />
+                </div>
+                <div className="Tracklist">
+                    <Tracklist />
                 </div>
             </div>
         </>    
