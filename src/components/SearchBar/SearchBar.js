@@ -4,7 +4,7 @@ import { Container, InputGroup, FormControl, Button } from 'react-bootstrap';
 //import styles from './SearchBar';
 import SpotifyWebApi from 'spotify-web-api-js';
 
-function SearchBar() {
+export default function SearchBar() {
 
     const spotifyApi = new SpotifyWebApi();
     const [searchInput, setSearchInput] = useState([""]);
@@ -17,70 +17,37 @@ function SearchBar() {
             setTracks(response.tracks.items.map(item => ({
                 id: item.id,
                 name: item.name,
-                artist: item.artists[0].name   
+                artist: item.artists[0].name,
+                albumArt: item.album.images[0].url
             })));
         });
     };
     
     console.log("'tracks' after mapping: ", tracks);
     
-    //handles display of typing in search box 
-    const handleChange = (event) => {
-        event.preventDefault();
-        setSearchInput(event.target.value.toLowerCase());
-    };
-
-    //runs the search() function
-    const handleKeyDown = (event) => {
-        if(event.key === "Enter") {
-            spotifyApi.setAccessToken(returnedToken);
-            console.log(searchInput);
-            search(); 
-        }
-    };
-
-    //runs the search() function
-    const handleClick = () => {
-        spotifyApi.setAccessToken(returnedToken);
-        search();
-    };
-
-    //calls token from local storage -- for testing to check value not undefined
     const returnedToken = localStorage.getItem("accessToken");
 
     return (
         <div className="SearchBar">
           <Container>
             <InputGroup className="mb-3" size="lg">
-              <FormControl
-                type="input"
-                onKeyDown={handleKeyDown}
-                onChange={handleChange}
-                placeholder="What song are you looking for?"
-                width="200px"
-              />
-              <Button onClick={handleClick}>Search</Button>  
+                <FormControl
+                    type="input"
+                    onKeyDown={(event) => { 
+                        if (event.key === "Enter") { 
+                            spotifyApi.setAccessToken(returnedToken);
+                            search(); 
+                    }}}
+                    onChange={(event) => {
+                        setSearchInput(event.target.value.toLowerCase())
+                    }}
+                    placeholder="What song are you looking for?"
+                    width="200px"
+                />
+                <Button onClick={() => { spotifyApi.setAccessToken(returnedToken);
+                                                search();}}>Search</Button>  
             </InputGroup>
           </Container>
         </div>
-
-/*    return (
-        <div className="SearchBar">
-            {!returnedToken && <a href="http://localhost:3000">Login to Spotify</a>}
-            {returnedToken && (
-                <>
-                    <input  type="text" 
-                            width="250px" 
-                            value={searchInput} 
-                            onChange={handleChange} 
-                            onKeyDown={handleKeyDown} 
-                            placeholder="What song are you looking for?"/>
-                    <button onClick={handleClick}>Search</button>
-                </>
-            )}
-        </div>
-*/
-    )
-}
-
-export default SearchBar;
+    );
+};

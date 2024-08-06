@@ -15,9 +15,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/profile" element={<Profile/>} />  
-          <Route index element={<Home/>} />
-          <Route path="/home" element={<Home/>} />
-          <Route path="/" />
+          <Route path="/" element={<Home />} />
         </Routes>
       </Router>
   );
