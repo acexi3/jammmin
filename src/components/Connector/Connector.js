@@ -1,4 +1,6 @@
 import React, { useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Button } from 'react-bootstrap';
 import './Connector.css';
 
 // This module is rendered as a button to
@@ -88,8 +90,11 @@ var AUTH_URL = 'https://accounts.spotify.com/authorize';
         });
         
         return (
+            <>
             <div className="Connector">
-                <button onClick={() => window.open(AUTH_URL, '_blank') }>Connect me to my Spotify!</button>
+                <Button onClick={() => window.open(AUTH_URL, '_blank') }>Connect me to my Spotify!</Button>
             </div>
+            <br></br>
+            </>
         );
 };

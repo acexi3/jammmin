@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, InputGroup, FormControl, Button } from 'react-bootstrap';
 //import styles from './SearchBar';
@@ -10,22 +10,20 @@ function SearchBar() {
     const [searchInput, setSearchInput] = useState([""]);
     const [tracks, setTracks] = useState([]);
     
-    //Update the state of searchResult on every change
-    useEffect(() => console.log("Search Result =", tracks), [tracks]);
-
     //Search for song title and return id, name, artists to display to user 
     const search = () => {
         spotifyApi.searchTracks("q: " + searchInput).then(response => {
             console.log("Raw response : ", response);
-            setTracks({
-                id: response.tracks.items[0].id,
-                name: response.tracks.items[0].name,
-                artist: response.tracks.items[0].artists[0].name
-            });
+            setTracks(response.tracks.items.map(item => ({
+                id: item.id,
+                name: item.name,
+                artist: item.artists[0].name   
+            })));
         });
-        console.log(tracks);
     };
-
+    
+    console.log("'tracks' after mapping: ", tracks);
+    
     //handles display of typing in search box 
     const handleChange = (event) => {
         event.preventDefault();
