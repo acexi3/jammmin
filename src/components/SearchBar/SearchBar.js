@@ -18,12 +18,13 @@ export default function SearchBar() {
                 id: item.id,
                 name: item.name,
                 artist: item.artists[0].name,
+                album: item.album,
                 albumArt: item.album.images[0].url
             })));
         });
     };
     
-    console.log("'tracks' after mapping: ", tracks);
+    console.log("tracks array after mapping response data: ", tracks);
     
     const returnedToken = localStorage.getItem("accessToken");
 

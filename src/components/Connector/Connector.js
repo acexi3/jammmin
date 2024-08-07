@@ -63,9 +63,9 @@ var AUTH_URL = 'https://accounts.spotify.com/authorize';
         return (
             <>
             <div className="Connector">
+                {console.log("send off to Spotify login page invoked.")}
                 <Button onClick={() => window.open(AUTH_URL, '_blank') }>Connect me to my Spotify!</Button>
             </div>
-            <br></br>
             </>
         );
 };

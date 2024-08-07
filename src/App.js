@@ -1,24 +1,26 @@
 import React from 'react';
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route
-} from 'react-router-dom';
+import Hero from './components/Hero/Hero';
+import SearchBar from './components/SearchBar/SearchBar';
+import Tracklist from './components/Tracklist/Tracklist';
 
-import Home from './pages/Home';
-import Profile from './pages/Profile';
+export default function App() {
+ 
 
+//    console.log(tracks);
 
-function App() {
-  return (  
-    
-      <Router>
-        <Routes>
-          <Route path="/profile" element={<Profile/>} />  
-          <Route path="/" element={<Home />} />
-        </Routes>
-      </Router>
-  );
-}
-
-export default App;
+    return (
+      <>
+        <div>
+          <div className="App">   
+            <Hero />
+          </div>
+          <div className="SearchBar">
+            <SearchBar />
+          </div>
+          <div className="Tracklist">
+            <Tracklist />
+          </div>
+        </div>
+      </>    
+    );
+};
