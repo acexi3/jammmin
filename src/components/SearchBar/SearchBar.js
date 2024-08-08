@@ -1,34 +1,25 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, InputGroup, FormControl, Button } from 'react-bootstrap';
-//import styles from './SearchBar';
 import SpotifyWebApi from 'spotify-web-api-js';
 
-export default function SearchBar() {
+export default function SearchBar(props) {
 
     const spotifyApi = new SpotifyWebApi();
     const [searchInput, setSearchInput] = useState([""]);
-    const [tracks, setTracks] = useState([]);
     
     //Search for song title and return id, name, artists to display to user 
-    const search = () => {
-        spotifyApi.searchTracks("q: " + searchInput).then(response => {
-            console.log("Raw response : ", response);
-            setTracks(response.tracks.items.map(item => ({
-                id: item.id,
-                name: item.name,
-                artist: item.artists[0].name,
-                album: item.album,
-                albumArt: item.album.images[0].url
-            })));
-        });
-    };
-    
-    console.log("tracks array after mapping response data: ", tracks);
+        const search = () => {
+        spotifyApi.searchTracks("q: " + searchInput)
+            .then(response => {
+                console.log("Raw response : ", response);
+                props.onSearch(response.tracks.items);
+            })};
     
     const returnedToken = localStorage.getItem("accessToken");
 
     return (
+        
         <div className="SearchBar">
           <Container>
             <InputGroup className="mb-3" size="lg">
