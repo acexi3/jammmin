@@ -2,24 +2,24 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Card } from 'react-bootstrap';
 
-export default function Tracklist(props) {
+export default function Tracklist({ tracks }) {
 
-  if (!props.tracklist) return <div>Loading...</div>;
+  console.log("Inside <Tracklist /> module", tracks);
 
   return (
     <div className="Tracklist">
       <Container>
         <Row className="mx-2 row row-cols-4">
-          { props.tracklist.map((track, i) => {
-              console.log(track);
+          { tracks.map((track, i) => {
+              console.log("track being mapped", track);
               
               return (
                 <Card>
-                  <Card.Img src={track.album.images[0].url} />
+                  <Card.Img src={track.albumArt} />
                     <Card.Body>
                       <Card.Title>{track.name}</Card.Title>
-                      <Card.Text>{track.artists[0].name}</Card.Text>
-                      <Card.Text>{track.album.name}</Card.Text>
+                      <Card.Text>{track.artist}</Card.Text>
+                      <Card.Text>{track.album}</Card.Text>
                     </Card.Body>
                 </Card>
               )

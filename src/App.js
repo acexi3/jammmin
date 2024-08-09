@@ -29,14 +29,14 @@ export default function App() {
     }
   }, [tracks]);      
 
-  console.log("tracklist, to be passed into <Tracklist />: ", tracklist);
+  console.log("tracklist, to be passed into <Tracklist />: ", JSON.stringify(tracklist, null, 2));
 
   return (
     <>
       <div className="App">
-        <div className="Hero"> <Hero /> </div>
-        <div className="SearchBar"> <SearchBar onSearch={handleSearch} /> </div>
-        <div className="Tracklist"> <Tracklist tracks={tracklist} /> </div>
+        <div className="Hero"><Hero /></div>
+        <div className="SearchBar"><SearchBar onSearch={handleSearch} /></div>
+        <div className="Tracklist"><Tracklist tracks={tracklist} /></div>
       </div>
     </>    
   );
