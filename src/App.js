@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
 import Hero from './components/Hero/Hero';
 import SearchBar from './components/SearchBar/SearchBar';
 import Tracklist from './components/Tracklist/Tracklist';
+import './App.css';
 
 export default function App() {
  
@@ -34,10 +36,28 @@ export default function App() {
   return (
     <>
       <div className="App">
-        <div className="Hero"><Hero /></div>
-        <div className="SearchBar"><SearchBar onSearch={handleSearch} /></div>
-        <div className="Tracklist"><Tracklist tracks={tracklist} /></div>
+        <Container>
+          <Row>
+            <Col>
+              <div className="Hero"><Hero /></div>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <div className="SearchBar"><SearchBar onSearch={handleSearch} /></div>
+            </Col>
+          </Row>
+          <Row>
+            <Col><div className="Tracklist"><Tracklist tracks={tracklist} /></div></Col>
+            <Col>2 of 2</Col>
+          </Row>
+          <Row>
+            <Col>1 of 3</Col>
+            <Col>2 of 3</Col>
+            <Col>3 of 3</Col>
+          </Row>
+        </Container>
       </div>
-    </>    
+    </> 
   );
 };

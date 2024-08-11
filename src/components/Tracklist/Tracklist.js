@@ -9,7 +9,7 @@ export default function Tracklist({ tracks }) {
   return (
     <div className="Tracklist">
       <Container>
-        <Row className="mx-2 row row-cols-4">
+        <Row className="mx2 row row-cols-1">
           { tracks.map((track, i) => {
               console.log("track being mapped", track);
               
@@ -29,23 +29,3 @@ export default function Tracklist({ tracks }) {
     </div>
   );
 }
-
-/*  
-
-return (
-
-    <div className="Tracklist">
-      <Container>
-        <Row className="mx-2 row row-cols-4">
-          <Card>
-            <Card.Body>
-              <Card.Title>Song Title</Card.Title>
-              <Card.Text>Artist</Card.Text>
-            </Card.Body>
-          </Card>
-        </Row>
-      </Container>
-    </div>
-  );
-};
-*/
