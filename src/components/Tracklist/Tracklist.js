@@ -9,7 +9,7 @@ export default function Tracklist({ tracks }) {
   return (
     <div className="Tracklist">
       <Container>
-        <Row className="mx2 row row-cols-1">
+        <Row className="mx2 row row-cols-2">
           { tracks.map((track, i) => {
               console.log("track being mapped", track);
               

@@ -8,15 +8,15 @@ export default function SearchBar(props) {
     const spotifyApi = new SpotifyWebApi();
     const [searchInput, setSearchInput] = useState([""]);
     
-    //Search for song title and return id, name, artists to display to user 
+    //Search for song title and return image, id, name, artists to display to user 
         const search = () => {
         spotifyApi.searchTracks("q: " + searchInput)
             .then(response => {
                 console.log("Raw response : ", response);
                 props.onSearch(response.tracks.items);
             })};
-    
-    const returnedToken = localStorage.getItem("accessToken");
+
+            const returnedToken = localStorage.getItem("accessToken");
 
     return (
         
@@ -24,10 +24,12 @@ export default function SearchBar(props) {
           <Container>
             <InputGroup className="mb-3" size="lg">
                 <FormControl
+                    id="search-input"
                     type="input"
                     onKeyDown={(event) => { 
                         if (event.key === "Enter") { 
                             spotifyApi.setAccessToken(returnedToken);
+                            event.target.value = "";
                             search(); 
                     }}}
                     onChange={(event) => {
@@ -37,7 +39,8 @@ export default function SearchBar(props) {
                     width="200px"
                 />
                 <Button onClick={() => { spotifyApi.setAccessToken(returnedToken);
-                                                search();}}>Search</Button>  
+                                            search();
+                                            document.getElementById("search-input").value = "";}}>Search</Button>  
             </InputGroup>
           </Container>
         </div>

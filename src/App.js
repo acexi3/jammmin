@@ -48,8 +48,11 @@ export default function App() {
             </Col>
           </Row>
           <Row>
-            <Col><div className="Tracklist"><Tracklist tracks={tracklist} /></div></Col>
-            <Col>2 of 2</Col>
+            <Col>
+            <div className="ResultsHeader">Search Results</div>
+            <div className="Tracklist"><Tracklist tracks={tracklist} /></div></Col>
+            <Col>Create Your Playlist</Col>
+            
           </Row>
           <Row>
             <Col>1 of 3</Col>
