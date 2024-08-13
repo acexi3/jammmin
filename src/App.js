@@ -3,6 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import Hero from './components/Hero/Hero';
 import SearchBar from './components/SearchBar/SearchBar';
 import Tracklist from './components/Tracklist/Tracklist';
+import Playlist from './components/Playlist/Playlist';
 import './App.css';
 
 export default function App() {
@@ -51,7 +52,9 @@ export default function App() {
             <Col>
             <div className="ResultsHeader">Search Results</div>
             <div className="Tracklist"><Tracklist tracks={tracklist} /></div></Col>
-            <Col>Create Your Playlist</Col>
+            <Col>
+            <div className="CreatePlaylist"><Playlist /></div>
+            </Col>
             
           </Row>
           <Row>
