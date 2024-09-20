@@ -7,18 +7,16 @@ import Playlist from './components/Playlist/Playlist';
 import './App.css';
 
 export default function App() {
- 
   const [tracks, setTracks] = useState([]);
-  const [tracklist, setTracklist] = useState([]); // new state, extracted mapped array
-  
-  console.log("Tracks set in App via SearchBar function: ", tracks);
+  const [tracklist, setTracklist] = useState([]);
+  const [selectedTracks, setSelectedTracks] = useState([]); // Store track details (title, artist, uri)
 
-  const handleSearch = (tracks) => { 
-    setTracks(tracks); 
-  }; // set the tracks state
+  // Handle search logic
+  const handleSearch = (tracks) => {
+    setTracks(tracks);
+  };
 
-  console.log("Tracks after handleSearch: ", tracks);
-
+  // Update tracklist state after search
   useEffect(() => {
     if (tracks.length > 0) {
       const mappedTracks = tracks.map((track) => ({
@@ -26,13 +24,28 @@ export default function App() {
         name: track.name,
         artist: track.artists[0].name,
         album: track.album.name,
-        albumArt: track.album.images[0].url
-      }));  
-      setTracklist(mappedTracks); // update the tracklist state
+        albumArt: track.album.images[0].url,
+        uri: track.uri // Include URI for adding to playlist
+      }));
+      setTracklist(mappedTracks);
     }
-  }, [tracks]);      
+  }, [tracks]);
 
-  console.log("tracklist, to be passed into <Tracklist />: ", JSON.stringify(tracklist, null, 2));
+  // Function to handle track selection
+  const handleTrackSelection = (track, isSelected) => {
+    if (isSelected) {
+      setSelectedTracks((prevTracks) => [...prevTracks, track]);
+    } else {
+      setSelectedTracks((prevTracks) =>
+        prevTracks.filter((t) => t.uri !== track.uri)
+      );
+    }
+  };
+
+  // Function to reset playlist after saving
+  const resetPlaylist = () => {
+    setSelectedTracks([]); // Clear selected tracks
+  };
 
   return (
     <>
@@ -43,27 +56,26 @@ export default function App() {
               <div className="Hero"><Hero /></div>
             </Col>
           </Row>
-          <Row>
+          <Row className="mt-3">
             <Col>
               <div className="SearchBar"><SearchBar onSearch={handleSearch} /></div>
             </Col>
           </Row>
           <Row>
             <Col>
-            <div className="ResultsHeader">Search Results</div>
-            <div className="Tracklist"><Tracklist tracks={tracklist} /></div></Col>
-            <Col>
-            <div className="CreatePlaylist"><Playlist /></div>
+              <div className="ResultsHeader">Search Results</div>
+              <div className="Tracklist">
+                <Tracklist tracks={tracklist} onTrackSelect={handleTrackSelection} />
+              </div>
             </Col>
-            
-          </Row>
-          <Row>
-            <Col>1 of 3</Col>
-            <Col>2 of 3</Col>
-            <Col>3 of 3</Col>
+            <Col>
+              <div className="CreatePlaylist">
+                <Playlist selectedTracks={selectedTracks} resetPlaylist={resetPlaylist} />
+              </div>
+            </Col>
           </Row>
         </Container>
       </div>
-    </> 
+    </>
   );
-};
+}

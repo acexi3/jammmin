@@ -1,119 +1,88 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, InputGroup, FormControl, Button } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 import SpotifyWebApi from 'spotify-web-api-js';
 
 const spotifyApi = new SpotifyWebApi();
 
-export default function Playlist() {
+export default function Playlist({ selectedTracks, resetPlaylist }) {
+  const [playlistName, setPlaylistName] = useState('');
+  const [description, setDescription] = useState('');
+  const [isPublic, setIsPublic] = useState(true);
 
-    const [playlistName, setPlaylistName] = useState("");
-    const [description, setDescription] = useState("");
-    const [isPublic, setIsPublic] = useState(true);
-    const [trackURIs, setTrackURIs] = useState([]);
+  // Confirm user authorization
+  const createPlaylist = async () => {
+    try {
+      const user = await spotifyApi.getMe();
+      const userId = user.id;
 
-    // Create a new playlist 
-    const createPlaylist = async () => {
-        try {
-            // Get User ID
-            const user = await spotifyApi.getMe();
-            const userId = user.id;
+      // Create the playlist
+      const playlist = await spotifyApi.createPlaylist(userId, {
+        name: playlistName,
+        description: description,
+        public: isPublic,
+      });
 
-            // Create the playlist
-            const playlist = await spotifyApi.createPlaylist(userId, {
-                name: playlistName,
-                description: description,
-                public: isPublic
-            });
+      // Add tracks to the playlist
+      if (selectedTracks.length > 0) {
+        const trackURIs = selectedTracks.map((track) => track.uri);
+        await spotifyApi.addTracksToPlaylist(playlist.id, trackURIs);
+      }
 
-            // Add tracks to the playlist, if any
+      alert(`Playlist created successfully!`);
+      resetPlaylist(); // Reset playlist after saving
+      setPlaylistName(''); // Clear playlist name
+      setDescription(''); // Clear description
+      setIsPublic(true);  // Reset public checkbox to default
+    } catch (error) {
+      console.error('Error creating playlist:', error);
+      alert('Failed to create playlist.');
+    }
+  };
 
-            if (trackURIs.length > 0) {
-                await spotifyApi.addTracksToPlaylist(playlist.id, trackURIs);
-            }
+  return (
+    <div className="CreatePlaylist">
+      <Form>
+        <Form.Group className="mb-3">
+          <Form.Label>Playlist Name</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter playlist name"
+            value={playlistName}
+            onChange={(e) => setPlaylistName(e.target.value)}
+          />
+        </Form.Group>
 
-            alert(`Playlist created successfully! Playlist ID: ${playlist.id}`);
-        } catch (error) {
-            console.error('Error creating playlist:', error);
-            alert('failed to create playlist.');
-            }
-    };
+        <Form.Group className="mb-3">
+          <Form.Control
+            type="text"
+            placeholder="Playlist Description (optional)"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </Form.Group>
 
-    return (
-        
-        <div className="CreatePlaylist">
-        <Container>
-        <InputGroup className="create-playlist" size="lg">
-            <FormControl
-                id="playlist-name"
-                type="input"
-                value={playlistName}
-                onChange={(event) => {
-                    setPlaylistName(event.target.value)
-                }}
-                placeholder="Playlist Name"
-                width="200px"
-            />
-            <FormControl
-                id="playlist-description"
-                type="input"
-                value={description}
-                onChange={(event) => {
-                    setDescription(event.target.value)
-                }}
-                placeholder="Playlist Description"
-                width="200px"
-            />
-            <FormControl
-                label="Public:"
-                id="public-private"
-                type="checkbox"
-                checked={isPublic}
-                onChange={(event) => setIsPublic(event.target.checked)}
-            /> 
-            <FormControl
-                type="input"
-                placeholder="Track URIs (comma-separated)"
-                value={trackURIs.join(',')}
-                onChange={(event) => setTrackURIs(event.target.value.split(','))}
-            />
-            <Button onClick={{createPlaylist}}>Create Playlist</Button>  
-        </InputGroup>
-        </Container>
-        </div>
-    );
+        <Form.Check
+          type="checkbox"
+          label="Public"
+          checked={isPublic}
+          onChange={(e) => setIsPublic(e.target.checked)}
+        />
+
+        <Button variant="primary" onClick={createPlaylist}>
+          Save Playlist
+        </Button>
+      </Form>
+
+      <br></br>
+      <h3>Selected Tracks</h3>
+      <ul>
+        {selectedTracks.map((track, index) => (
+          <li key={index}>
+            {track.name} - {track.artist}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 };
-        /*
-        <div>
-        <h2>Create Your New Playlist</h2><br/>
-        <input
-          type="text"
-          placeholder="Playlist Name"
-          value={playlistName}
-          onChange={(e) => setPlaylistName(e.target.value)}
-        /><br/><br/>
-        <textarea
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <div>
-          <label>
-            Public:
-            <input
-              type="checkbox"
-              checked={isPublic}
-              onChange={(e) => setIsPublic(e.target.checked)}
-            />
-          </label>
-        </div><br/>
-        <input
-          type="text"
-          placeholder="Track URIs (comma-separated)"
-          value={trackURIs.join(',')}
-          onChange={(e) => setTrackURIs(e.target.value.split(','))}
-        />
-        <button onClick={createPlaylist}>Create Playlist</button>
-      </div>
-    );
-};*/
