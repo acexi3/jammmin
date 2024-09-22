@@ -19,7 +19,6 @@ export default function SearchBar(props) {
             const returnedToken = localStorage.getItem("accessToken");
 
     return (
-        
         <div className="SearchBar">
           <Container>
             <InputGroup className="mb-3" size="lg">

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import Hero from './components/Hero/Hero';
-import SearchBar from './components/SearchBar/SearchBar';
 import Tracklist from './components/Tracklist/Tracklist';
 import Playlist from './components/Playlist/Playlist';
 import './App.css';
@@ -73,11 +72,13 @@ export default function App() {
         await spotifyApi.addTracksToPlaylist(playlist.id, trackURIs);
       }
 
+      // Reset Playlist creator and Search after Playlist is saved
       alert('Playlist created successfully!');
       setPlaylistName('');
       setDescription('');
       setIsPublic(true);
       setSelectedTracks([]);
+      setTracklist([]);
     } catch (error) {
       console.error('Error creating Playlist:', error);
       alert('Failed to create Playlist.');
@@ -99,25 +100,20 @@ export default function App() {
                   isPublic={isPublic}
                   setIsPublic={setIsPublic}
                   createPlaylist={createPlaylist}
+                  onSearch={handleSearch}
                 />
-              </div>
-            </Col>
-          </Row>
-          <Row className="mt-3">
-            <Col>
-              <div className="SearchBar">
-                <SearchBar onSearch={handleSearch} />
               </div>
             </Col>
           </Row>
           <Row>
             <Col>
-              <div className="ResultsHeader">Search Results</div>
+              <div className="SearchHeader"><h3>Search Results</h3></div>
               <div className="Tracklist">
                 <Tracklist tracks={tracklist} onTrackSelect={handleTrackSelection} />
               </div>
             </Col>
             <Col>
+              {/*<div className="PlaylistHeader"><h3>Selected Tracks</h3></div>*/}
               <div className="CreatePlaylist">
                 <Playlist selectedTracks={selectedTracks} />
               </div>

@@ -1,4 +1,7 @@
 .Hero {
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Float Hero above other content */ 
     display: block;
     background: rgb(2,0,36);
     background: linear-gradient(

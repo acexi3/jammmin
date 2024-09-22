@@ -1,11 +1,19 @@
 import React from 'react';
 import Connector from '../Connector/Connector';
-//import Playlist from '../Playlist/Playlist';
+import SearchBar from '../SearchBar/SearchBar';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Hero.css';
 
-export default function Hero({ playlistName, setPlaylistName, description, setDescription, isPublic, setIsPublic, createPlaylist }) {
+export default function Hero({ 
+    playlistName, 
+    setPlaylistName, 
+    description, 
+    setDescription, 
+    isPublic, 
+    setIsPublic, 
+    createPlaylist, 
+    onSearch }) {
     
     return (
         <Container>
@@ -13,7 +21,7 @@ export default function Hero({ playlistName, setPlaylistName, description, setDe
                 <Col>
                     <div className="Hero">
                         <h1>Looking for Music?</h1>
-                        <p>Create your Spotify playlists with ease, here.</p>
+                        <h5><p>Create your Spotify playlists with ease, here.</p></h5>
                         <br/>
                         <Connector />
                     </div>
@@ -22,7 +30,7 @@ export default function Hero({ playlistName, setPlaylistName, description, setDe
                     <div className="CreatePlaylist">
                         <Form>
                             <Form.Group className="mb-3">
-                                <Form.Label>Playlist Name</Form.Label>
+                                <Form.Label><h3>Playlist Name</h3></Form.Label>
                                 <Form.Control
                                 type="text"
                                 placeholder="Enter playlist name"
@@ -48,11 +56,16 @@ export default function Hero({ playlistName, setPlaylistName, description, setDe
                             />
 
                             <Button variant="primary" onClick={createPlaylist}>
-                            Save Playlist to My Spotify
+                                Save Playlist to My Spotify
                             </Button>
                         </Form>
+                        <br></br>
                     </div>
                 </Col>
+            </Row>
+            {/* SearchBar aded to bottom of Hero component */}
+            <Row className="mt-3">
+                <SearchBar onSearch={onSearch} />
             </Row>
         </Container>
     );

@@ -1,6 +1,9 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Row, Card, Form } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
+import Form from 'react-bootstrap/Form';
 
 export default function Tracklist({ tracks, onTrackSelect }) {
 
@@ -11,12 +14,24 @@ export default function Tracklist({ tracks, onTrackSelect }) {
   };
 
   return (
-    <div className="Tracklist">
-      <Container>
-        <Row className="mx2 row row-cols-2">
-          { tracks.map((track, i) => (
-            <Card key={track.id}>
-              <Card.Img src={track.albumArt} />
+    <div className="Tracklist">{ tracks.map((track, i) => (
+      
+        <Card className='bg-dark text-white mb-3' 
+          key={track.id}>
+          {/* Card row for layout */}
+          <Row className="TrackContainer align-items-center">
+            
+            {/* Column containing centered album image */}
+            <Col xs={4} className="d-flex justify-content-center">  
+              <Card.Img 
+                src={track.albumArt} 
+                alt={`${track.name} album art`}
+                style={{ width: '150px', height: '150px', objectFit: 'cover', padding: '5px' }} 
+              />
+            </Col>
+            
+            {/* Column containing text and checkbox */}
+            <Col xs={8}>  
               <Card.Body>
                 <Card.Title>{track.name}</Card.Title>
                 <Card.Text>{track.artist}</Card.Text>
@@ -27,10 +42,10 @@ export default function Tracklist({ tracks, onTrackSelect }) {
                   onChange={(e) => handleSelect(track, e)}
                 />
               </Card.Body>
-            </Card>
-          ))}
-        </Row>
-      </Container>
+            </Col>
+          </Row>
+        </Card>    
+      ))}
     </div>
   );
-};
+}
