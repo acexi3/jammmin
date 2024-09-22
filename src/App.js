@@ -22,12 +22,12 @@ export default function App() {
   const [description, setDescription] = useState('');
   const [isPublic, setIsPublic] = useState(true);
 
-  // Handle search logic
+  // Function to handle search logic, accepting tracks
   const handleSearch = (tracks) => {
     setTracks(tracks);
   };
 
-  // Update Tracklist state after search
+  // UseEffect updating Tracklist state after searches
   useEffect(() => {
     if (tracks.length > 0) {
       const mappedTracks = tracks.map((track) => ({
@@ -53,7 +53,7 @@ export default function App() {
     }
   };
 
-  // Create Playlist name/description and add tracks to it
+  // Async Function to create Playlist name/description and add tracks to Playlist
   const createPlaylist = async () => {
     try {
       const user = await spotifyApi.getMe();
@@ -107,13 +107,12 @@ export default function App() {
           </Row>
           <Row>
             <Col>
-              <div className="SearchHeader"><h3>Search Results</h3></div>
+              {tracklist.length > 0 && (<div className="SearchHeader"><h3>Search Results</h3></div>)}
               <div className="Tracklist">
                 <Tracklist tracks={tracklist} onTrackSelect={handleTrackSelection} />
               </div>
             </Col>
             <Col>
-              {/*<div className="PlaylistHeader"><h3>Selected Tracks</h3></div>*/}
               <div className="CreatePlaylist">
                 <Playlist selectedTracks={selectedTracks} />
               </div>
