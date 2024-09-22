@@ -1,9 +1,6 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Card from 'react-bootstrap/Card';
-import Form from 'react-bootstrap/Form';
+import { Card, Row, Col, Form } from 'react-bootstrap';
 
 export default function Tracklist({ tracks, onTrackSelect }) {
 
@@ -13,6 +10,7 @@ export default function Tracklist({ tracks, onTrackSelect }) {
     onTrackSelect(track, e.target.checked);
   };
 
+  // Tracklist cards
   return (
     <div className="Tracklist">{ tracks.map((track, i) => (
       

@@ -91,8 +91,9 @@ export default function App() {
         <Container>
           <Row>
             <Col>
-              <div className="Hero">
+              <div>
                 <Hero 
+                  className="fixed-top" bg="light" expand="lg"
                   playlistName={playlistName}
                   setPlaylistName={setPlaylistName}
                   description={description}
@@ -105,6 +106,8 @@ export default function App() {
               </div>
             </Col>
           </Row>
+        </Container>
+        <Container> 
           <Row>
             <Col>
               {tracklist.length > 0 && (<div className="SearchHeader"><h3>Search Results</h3></div>)}

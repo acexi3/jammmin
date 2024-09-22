@@ -31,3 +31,21 @@
 p {
   font-style: italic;
 }
+
+.Hero {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important; /* Float Hero above other content */ 
+    display: block;
+    background: rgb(2,0,36);
+    background: linear-gradient(
+        90deg, 
+        rgba(2,0,36,1) 0%, 
+        rgba(42,42,124,1) 37%, 
+        rgba(0,212,255,1) 100%
+    );
+    height: auto;
+    width: 100%;
+    padding: 1% 1%;
+    color: white;
+}
