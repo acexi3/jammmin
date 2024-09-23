@@ -34,7 +34,7 @@ export default function SearchBar(props) {
                     onChange={(event) => {
                         setSearchInput(event.target.value.toLowerCase())
                     }}
-                    placeholder="What song are you looking for?"
+                    placeholder="What song(s) and/or artist(s) are you looking for?"
                     width="200px"
                 />
                 <Button onClick={() => { spotifyApi.setAccessToken(returnedToken);

@@ -1,6 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Card, Row, Col, Form } from 'react-bootstrap';
+import { Container, Card, Row, Col, Form } from 'react-bootstrap';
+import './tracklist.css';
 
 export default function Tracklist({ tracks, onTrackSelect }) {
 
@@ -12,9 +13,12 @@ export default function Tracklist({ tracks, onTrackSelect }) {
 
   // Tracklist cards
   return (
-    <div className="Tracklist">{ tracks.map((track, i) => (
+    <div className="TracklistContainer">
+      <Container>
+
+        { tracks.map((track, i) => (
       
-        <Card className='bg-dark text-white mb-3' 
+        <Card className='bg-dark text-white mb-2' 
           key={track.id}>
           {/* Card row for layout */}
           <Row className="TrackContainer align-items-center">
@@ -24,7 +28,7 @@ export default function Tracklist({ tracks, onTrackSelect }) {
               <Card.Img 
                 src={track.albumArt} 
                 alt={`${track.name} album art`}
-                style={{ width: '150px', height: '150px', objectFit: 'cover', padding: '5px' }} 
+                style={{ width: '120px', height: '120px', objectFit: 'cover', padding: '2px' }} 
               />
             </Col>
             
@@ -42,8 +46,11 @@ export default function Tracklist({ tracks, onTrackSelect }) {
               </Card.Body>
             </Col>
           </Row>
-        </Card>    
-      ))}
+        </Card>
+        
+        ))}
+
+      </Container>
     </div>
   );
 }

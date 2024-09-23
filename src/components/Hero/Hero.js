@@ -8,7 +8,7 @@ import './Hero.css';
 import backgroundImage from '../../images/compose_01.jpg';
 
 // The Hero is the app, essentially. The hub of functionality.
-// Parent of Connector, Playlist, SearchBar and Tracklist components
+// Parent of Connector, Playlist, SearchBar and Tracklist components.
 
 export default function Hero({ 
     playlistName, 
@@ -34,10 +34,10 @@ export default function Hero({
                 rgba(0,212,255,1) 100%
               ), 
               url(${backgroundImage})`,
-            backgroundBlendMode: 'darken', // Blending effect
+            backgroundBlendMode: 'overlay', // Blending effect
             backgroundSize: 'cover', 
             backgroundPosition: 'center',
-            height: 'auto' // Ensures it covers the viewport height
+            height: 'auto', // Ensures it covers the viewport height
           }}
         >
             <Row> {/* Row one with two columns/sections: 1. Login to Spotify 2. Create Playlist */}
@@ -58,7 +58,7 @@ export default function Hero({
                                 <Form.Label><h3>Playlist Name</h3></Form.Label>
                                 <Form.Control
                                 type="text"
-                                placeholder="Enter playlist name"
+                                placeholder="What will you call it?"
                                 value={playlistName}
                                 onChange={(e) => setPlaylistName(e.target.value)}
                                 />
