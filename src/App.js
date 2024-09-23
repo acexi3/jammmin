@@ -8,6 +8,8 @@ import SpotifyWebApi from 'spotify-web-api-js';
 
 const spotifyApi = new SpotifyWebApi();
 
+// The App component handles all search logic andd states
+
 export default function App() {
   
   // Search and Tracklist states

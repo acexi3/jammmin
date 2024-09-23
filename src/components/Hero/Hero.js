@@ -2,8 +2,8 @@ import React from 'react';
 import Connector from '../Connector/Connector';
 import SearchBar from '../SearchBar/SearchBar';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
-//import 'bootstrap/dist/css/bootstrap.min.css';
-//import './Hero.css';
+import './Hero.css';
+import backgroundImage from '../../images/compose_02.jpg';
 
 export default function Hero({ 
     playlistName, 
@@ -16,7 +16,22 @@ export default function Hero({
     onSearch }) {
     
     return (
-        <Container>
+        <Container className="Hero"
+        style={{ 
+            backgroundImage: `
+              linear-gradient(
+                90deg, 
+                rgba(2,0,36,1) 0%, 
+                rgba(42,42,124,1) 37%, 
+                rgba(0,212,255,1) 100%
+              ), 
+              url(${backgroundImage})`,
+            backgroundBlendMode: 'overlay', // This keeps the blending effect
+            backgroundSize: 'cover', 
+            backgroundPosition: 'center',
+            height: '100vh' // Ensures it covers the viewport height
+          }}
+        >
             <Row>
                 <Col>
                     <div>
