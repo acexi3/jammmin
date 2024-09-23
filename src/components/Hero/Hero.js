@@ -1,9 +1,14 @@
 import React from 'react';
 import Connector from '../Connector/Connector';
 import SearchBar from '../SearchBar/SearchBar';
+import Tracklist from '../Tracklist/Tracklist';
+import Playlist from '../Playlist/Playlist';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import './Hero.css';
-import backgroundImage from '../../images/compose_02.jpg';
+import backgroundImage from '../../images/compose_01.jpg';
+
+// The Hero is the app, essentially. The hub of functionality.
+// Parent of Connector, Playlist, SearchBar and Tracklist components
 
 export default function Hero({ 
     playlistName, 
@@ -13,7 +18,10 @@ export default function Hero({
     isPublic, 
     setIsPublic, 
     createPlaylist, 
-    onSearch }) {
+    onSearch,
+    tracklist,
+    onTrackSelect,
+    selectedTracks }) {
     
     return (
         <Container className="Hero"
@@ -26,14 +34,15 @@ export default function Hero({
                 rgba(0,212,255,1) 100%
               ), 
               url(${backgroundImage})`,
-            backgroundBlendMode: 'overlay', // This keeps the blending effect
+            backgroundBlendMode: 'darken', // Blending effect
             backgroundSize: 'cover', 
             backgroundPosition: 'center',
-            height: '100vh' // Ensures it covers the viewport height
+            height: 'auto' // Ensures it covers the viewport height
           }}
         >
-            <Row>
-                <Col>
+            <Row> {/* Row one with two columns/sections: 1. Login to Spotify 2. Create Playlist */}
+                {/* Connector - user access to Spotify account, retrieve auth token */}
+                <Col className="Authentication">
                     <div>
                         <h1>Looking for Music?</h1>
                         <h5><p>Create your Spotify playlists with ease, here.</p></h5>
@@ -41,8 +50,9 @@ export default function Hero({
                         <Connector />
                     </div>
                 </Col>
-                <Col>
-                    <div className="CreatePlaylist">
+                {/* Playlist Creator - name & describe your playlist, public or private and save it */}
+                <Col className="PlaylistCreator">
+                    <div>
                         <Form>
                             <Form.Group className="mb-3">
                                 <Form.Label><h3>Playlist Name</h3></Form.Label>
@@ -78,10 +88,23 @@ export default function Hero({
                     </div>
                 </Col>
             </Row>
-            {/* SearchBar added to bottom of Hero component */}
+            {/* Row two with one column: SearchBar - to search for songs and-or artists */}
             <Row className="mt-3">
                 <SearchBar onSearch={onSearch} />
             </Row>
+            <Row> {/* Row three with two columns/sections: 1. Search results 2. Tracks to add to playlist */}
+                <Col className="Tracklist">
+                    {tracklist.length > 0 && (<div className="SearchHeader"><h3>Search Results</h3></div>)}
+                    <div>
+                        <Tracklist tracks={tracklist} onTrackSelect={onTrackSelect} />
+                    </div>
+                </Col>
+                <Col className="Playlist">              
+                    <div>
+                        <Playlist selectedTracks={selectedTracks} />
+                    </div>
+                </Col>
+          </Row>
         </Container>
     );
 }

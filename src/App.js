@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import Hero from './components/Hero/Hero';
-import Tracklist from './components/Tracklist/Tracklist';
-import Playlist from './components/Playlist/Playlist';
+//import Tracklist from './components/Tracklist/Tracklist';
+//import Playlist from './components/Playlist/Playlist';
 import './App.css';
 import SpotifyWebApi from 'spotify-web-api-js';
 
 const spotifyApi = new SpotifyWebApi();
 
-// The App component handles all search logic andd states
+// The App component handles all search logic and states
 
 export default function App() {
   
@@ -104,26 +104,15 @@ export default function App() {
                   setIsPublic={setIsPublic}
                   createPlaylist={createPlaylist}
                   onSearch={handleSearch}
+                  tracklist={tracklist}
+                  onTrackSelect={handleTrackSelection}
+                  selectedTracks={selectedTracks}
                 />
               </div>
             </Col>
           </Row>
         </Container>
-        <Container> 
-          <Row>
-            <Col>
-              {tracklist.length > 0 && (<div className="SearchHeader"><h3>Search Results</h3></div>)}
-              <div className="Tracklist">
-                <Tracklist tracks={tracklist} onTrackSelect={handleTrackSelection} />
-              </div>
-            </Col>
-            <Col>
-              <div className="CreatePlaylist">
-                <Playlist selectedTracks={selectedTracks} />
-              </div>
-            </Col>
-          </Row>
-        </Container>
+
       </div>
     </>
   );
