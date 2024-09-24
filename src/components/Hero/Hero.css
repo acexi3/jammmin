@@ -16,5 +16,7 @@
     padding: 2px;      /* Optional: Adds padding inside */
 }
 
-  
+h5 {
+    font-style: italic;    
+}
 

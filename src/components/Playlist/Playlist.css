@@ -13,7 +13,7 @@
 .PlaylistSongs {
     height: 50vh; /* Adjust height as needed */
     overflow-y: auto; /* Allows scrolling for the tracklist */
-    border-top: 2px solid #ccc; /* Optional: Add a divider between header and list */
+    /* border-top: 1px solid #ccc; /* Optional: Add a divider between header and list */
     padding-top: 5px;
   }
 

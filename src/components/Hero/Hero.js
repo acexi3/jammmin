@@ -5,24 +5,24 @@ import Tracklist from '../Tracklist/Tracklist';
 import Playlist from '../Playlist/Playlist';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import './Hero.css';
-import backgroundImage from '../../images/compose_01.jpg';
+import backgroundImage from '../../images/compose_03.jpg';
 
 // The Hero is the app, essentially. The hub of functionality.
 // Parent of Connector, Playlist, SearchBar and Tracklist components.
 
 export default function Hero({ 
     playlistName, 
-    setPlaylistName, 
-    description, 
-    setDescription, 
-    isPublic, 
-    setIsPublic, 
+    setPlaylistName,
+    description,
+    setDescription,
+    isPublic,
+    setIsPublic,
     createPlaylist, 
     onSearch,
     tracklist,
     onTrackSelect,
     selectedTracks }) {
-    
+
     return (
         <Container className="HeroContainer"
             style={{ 
@@ -55,7 +55,7 @@ export default function Hero({
                     <div>
                         <Form>
                             <Form.Group className="mb-3">
-                                <Form.Label><h3>Playlist Name</h3></Form.Label>
+                                <Form.Label><h5>This is Your Playlist:</h5></Form.Label>
                                 <Form.Control
                                 type="text"
                                 placeholder="What will you call it?"
