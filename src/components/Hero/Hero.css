@@ -1,4 +1,20 @@
-.Hero {
+.HeroContainer {
+    position: relative;
+    border-radius: '8px' /* Optional: Adds rounded corners */
 }
+  
+.PlaylistContainer {
+    position: absolute; /* Keeps the playlist fixed */
+    top: 108%;           /* Adjust the position as needed */
+    left: 55%;          /* Align it to the right (or any other position) */
+    width: 40%;         /* Adjust width as needed */
+    min-height: 40vh;  /* Adjust height, so the list has space to scroll */
+    height: 50vh;       /* Adjust height, so the list has space to scroll */
+    background-color: dark; /* rgba(255, 255, 255, 0.8) Slight transparency */
+    z-index: 1000;      /* Ensure it stays above other elements */
+    border-radius: 8px; /* Optional: Adds rounded corners */
+    padding: 2px;      /* Optional: Adds padding inside */
+}
+
   
 

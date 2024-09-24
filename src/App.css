@@ -9,8 +9,16 @@
     rgba(42,42,124,1) 37%, 
     rgba(0,212,255,1) 100%
   );
+  background-attachment: fixed; /* Background scrolls with the page */
   padding: 1% 5%;
   color: white;
+  border-radius: '8px'; /* Optional: Adds rounded corners */
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
 }
 
 .App-header {
@@ -34,15 +42,9 @@ p {
 
 .Hero {
     display: block;
-    background: rgb(2,0,36);
-    background: linear-gradient(
-        90deg, 
-        rgba(2,0,36,1) 0%, 
-        rgba(42,42,124,1) 37%, 
-        rgba(0,212,255,1) 100%
-    );
-    height: auto;
+    max-height: 40vh;
     width: 100%;
     padding: 1% 1%;
     color: white;
+    border-radius: '8px'; /* Adds rounded corners */
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Card, Row, Col, Form } from 'react-bootstrap';
-import './tracklist.css';
+import './Tracklist.css';
 
 export default function Tracklist({ tracks, onTrackSelect }) {
 
@@ -11,19 +11,24 @@ export default function Tracklist({ tracks, onTrackSelect }) {
     onTrackSelect(track, e.target.checked);
   };
 
-  // Tracklist cards
+  // Search Results: Tracklist cards
   return (
-    <div className="TracklistContainer">
+    <div className="TracklistContainer"> {/*Container for individual track Cards*/} 
       <Container>
 
+      {/*Iterate through tracks array to display each search result track on a Card*/}
         { tracks.map((track, i) => (
-      
-        <Card className='bg-dark text-white mb-2' 
+          
+        <Card 
+          className='bg-dark text-white mb-2' 
           key={track.id}>
-          {/* Card row for layout */}
-          <Row className="TrackContainer align-items-center">
+          
+          {/* Card row for track layout, contains two columns: 1. image and 2. info/checkbox */}
+          <Row 
+            className="TrackContainer align-items-center"
+            box-shadow="0 4px 8px rgba(0, 0, 0, 0.1)">
             
-            {/* Column containing centered album image */}
+            {/* Column one containing centered album image */}
             <Col xs={4} className="d-flex justify-content-center">  
               <Card.Img 
                 src={track.albumArt} 
@@ -32,7 +37,7 @@ export default function Tracklist({ tracks, onTrackSelect }) {
               />
             </Col>
             
-            {/* Column containing text and checkbox */}
+            {/* Column two containing text and checkbox */}
             <Col xs={8}>  
               <Card.Body>
                 <Card.Title>{track.name}</Card.Title>

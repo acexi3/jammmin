@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import Hero from './components/Hero/Hero';
-//import Tracklist from './components/Tracklist/Tracklist';
-//import Playlist from './components/Playlist/Playlist';
 import './App.css';
 import SpotifyWebApi from 'spotify-web-api-js';
 
@@ -112,7 +110,6 @@ export default function App() {
             </Col>
           </Row>
         </Container>
-
       </div>
     </>
   );

@@ -24,20 +24,20 @@ export default function Hero({
     selectedTracks }) {
     
     return (
-        <Container className="Hero"
-        style={{ 
-            backgroundImage: `
-              linear-gradient(
-                90deg, 
-                rgba(2,0,36,1) 0%, 
-                rgba(42,42,124,1) 37%, 
-                rgba(0,212,255,1) 100%
-              ), 
-              url(${backgroundImage})`,
-            backgroundBlendMode: 'overlay', // Blending effect
-            backgroundSize: 'cover', 
-            backgroundPosition: 'center',
-            height: 'auto', // Ensures it covers the viewport height
+        <Container className="HeroContainer"
+            style={{ 
+                backgroundImage: `
+                linear-gradient(
+                    90deg, 
+                    rgba(2,0,36,1) 0%, 
+                    rgba(42,42,124,1) 37%, 
+                    rgba(0,212,255,1) 100%
+                ), 
+                url(${backgroundImage})`,
+                backgroundBlendMode: 'overlay', // Blending effect
+                backgroundSize: 'cover', 
+                backgroundPosition: 'center',
+                height: '40vh', // Ensures it covers the viewport height
           }}
         >
             <Row> {/* Row one with two columns/sections: 1. Login to Spotify 2. Create Playlist */}
@@ -92,18 +92,20 @@ export default function Hero({
             <Row className="mt-3">
                 <SearchBar onSearch={onSearch} />
             </Row>
-            <Row> {/* Row three with two columns/sections: 1. Search results 2. Tracks to add to playlist */}
+            <Row> {/* Row three with two columns/sections: 1. Search results (tracklist) 2. Tracks to add to playlist */}
                 <Col className="Tracklist">
-                    {tracklist.length > 0 && (<div className="SearchHeader"><h3>Search Results</h3></div>)}
+                    {tracklist.length > 0}
                     <div>
                         <Tracklist tracks={tracklist} onTrackSelect={onTrackSelect} />
                     </div>
                 </Col>
-                <Col className="Playlist">              
+                
+                <Container className="PlaylistContainer">              
                     <div>
                         <Playlist selectedTracks={selectedTracks} />
                     </div>
-                </Col>
+                </Container>
+                
           </Row>
         </Container>
     );

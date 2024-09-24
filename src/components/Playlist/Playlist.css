@@ -1,0 +1,38 @@
+.SonglistContainer {
+    width: 100%;
+    padding: 5px;
+    height: 50vh;
+  }
+
+.PlaylistHeader {
+    /* Style for the header */
+    font-size: 1rem;
+    margin-bottom: 5px;
+  }
+  
+.PlaylistSongs {
+    height: 50vh; /* Adjust height as needed */
+    overflow-y: auto; /* Allows scrolling for the tracklist */
+    border-top: 2px solid #ccc; /* Optional: Add a divider between header and list */
+    padding-top: 5px;
+  }
+
+/* For Chrome, Safari, and Opera */
+.PlaylistSongs::-webkit-scrollbar {
+    width: 8px; /* Set the width of the scrollbar */
+}
+  
+.PlaylistSongs::-webkit-scrollbar-track {
+    background: transparent; /* Transparent scrollbar track */
+ }
+  
+.PlaylistSongs::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2); /* Slightly transparent scrollbar thumb */
+    border-radius: 10px; /* Rounded scrollbar thumb */
+ }
+  
+  /* For Firefox */
+.PlaylistSongs {
+    scrollbar-width: thin; /* Sets a thinner scrollbar */
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent; /* Transparent scrollbar thumb */
+ }

@@ -1,15 +1,15 @@
 .TracklistContainer {
-    position: fixed; /* Keeps the tracklist floating */
-    top: 48%;        /* Adjust the position as needed */
-    left: 290px;        /* Align it to the right (or any other position) */
-    width: 600px;    /* Adjust width as needed */
-    height: 50vh;    /* Adjust height, so the list has space to scroll */
-    overflow-y: auto; /* Allows scrolling within the container */
+    position: absolute; /* Keeps the tracklist fixed */
+    top: 108%;          /* Adjust the position as needed */
+    left: 0;            /* Align it to the left (or any other position) */
+    width: 50%;         /* Adjust width as needed */
+    height: 50vh;       /* Adjust height, so the list has space to scroll */
+    overflow-y: auto;   /* Allows scrolling within the container */
     background-color: dark; /* rgba(255, 255, 255, 0.8) Slight transparency */
-    z-index: 1000;   /* Ensure it stays above other elements */
+    z-index: 1000;      /* Ensure it stays above other elements */
     border-radius: 8px; /* Optional: Adds rounded corners */
-    padding: 10px;   /* Optional: Adds padding inside */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Adds shadow effect */
+    padding: 10px;      /* Optional: Adds padding inside */
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Adds shadow effect */
 
   /* Hide scrollbar for Chrome, Safari, and newer versions of Edge */
   scrollbar-width: none; /* For Firefox */
