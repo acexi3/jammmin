@@ -11,17 +11,14 @@ import backgroundImage from '../../images/compose_03.jpg';
 // Parent of Connector, Playlist, SearchBar and Tracklist components.
 
 export default function Hero({ 
-    playlistName, 
-    setPlaylistName,
-    description,
-    setDescription,
-    isPublic,
-    setIsPublic,
+    playlistForm,
+    onPlaylistFormChange,
     createPlaylist, 
     onSearch,
     tracklist,
     onTrackSelect,
-    selectedTracks }) {
+    selectedTracks 
+}) {
 
     return (
         <Container className="HeroContainer"
@@ -59,8 +56,8 @@ export default function Hero({
                                 <Form.Control
                                 type="text"
                                 placeholder="What will you call it?"
-                                value={playlistName}
-                                onChange={(e) => setPlaylistName(e.target.value)}
+                                value={playlistForm.name}
+                                onChange={(e) => onPlaylistFormChange('name', e.target.value)}
                                 />
                             </Form.Group>
 
@@ -68,16 +65,16 @@ export default function Hero({
                                 <Form.Control
                                 type="text"
                                 placeholder="Playlist Description (optional)"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
+                                value={playlistForm.description}
+                                onChange={(e) => onPlaylistFormChange('description', e.target.value)}
                                 />
                             </Form.Group>
 
                             <Form.Check
                                 type="checkbox"
                                 label="Public"
-                                checked={isPublic}
-                                onChange={(e) => setIsPublic(e.target.checked)}
+                                checked={playlistForm.isPublic}
+                                onChange={(e) => onPlaylistFormChange('isPublic', e.target.checked)}
                             />
                             <br></br>
                             <Button variant="primary" onClick={createPlaylist}>

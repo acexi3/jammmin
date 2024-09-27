@@ -10,6 +10,7 @@ const spotifyApi = new SpotifyWebApi();
 
 export default function App() {
   
+  // State Definitions
   // Search and Tracklist states
   const [tracks, setTracks] = useState([]); 
   const [tracklist, setTracklist] = useState([]);
@@ -17,10 +18,18 @@ export default function App() {
   // Store track title, artist & uri for Playlist display
   const [selectedTracks, setSelectedTracks] = useState([]);
 
-  // Form states for Playlist creation
+  // Store related playlist state variables as a state object
+  const [playlistForm, setPlaylistForm] = useState({
+    name: '',
+    description: '',
+    isPublic: true,
+  });
+
+  /* Form states for Playlist creation
   const [playlistName, setPlaylistName] = useState('');
   const [description, setDescription] = useState('');
   const [isPublic, setIsPublic] = useState(true);
+*/
 
   // Function to handle search logic, accepting tracks
   const handleSearch = (tracks) => {
@@ -53,6 +62,11 @@ export default function App() {
     }
   };
 
+  // Function to handle Playlist name, description and Playlist status changes
+  const handlePlaylistFormChange = (field, value) => {
+    setPlaylistForm(prev => ({ ...prev, [field]: value }));
+  };
+
   // Async Function to create Playlist name/description and add tracks to Playlist
   const createPlaylist = async () => {
     try {
@@ -60,23 +74,21 @@ export default function App() {
       const userId = user.id;
 
       // Create the Playlist
-      const playlist = await spotifyApi.createPlaylist(userId, {
-        name: playlistName,
-        description: description,
-        public: isPublic,
-      });
+      const playlist = await spotifyApi.createPlaylist(userId, playlistForm);
 
-      // Add tracks to the Playlist
+      // Then add tracks to the Playlist
       if (selectedTracks.length > 0) {
         const trackURIs = selectedTracks.map((track) => track.uri);
         await spotifyApi.addTracksToPlaylist(playlist.id, trackURIs);
       }
 
       // Reset Playlist creator and Search after Playlist is saved
-      alert('Playlist created successfully!');
-      setPlaylistName('');
-      setDescription('');
-      setIsPublic(true);
+      alert('Playlist created successfully! Open your Spotify app to listen and alter it as you wish!');
+      setPlaylistForm({
+        name: '',
+        description: '',
+        isPublic: true,
+      });
       setSelectedTracks([]);
       setTracklist([]);
     } catch (error) {
@@ -94,12 +106,8 @@ export default function App() {
               <div>
                 <Hero 
                   className="fixed-top" bg="light" expand="lg"
-                  playlistName={playlistName}
-                  setPlaylistName={setPlaylistName}
-                  description={description}
-                  setDescription={setDescription}
-                  isPublic={isPublic}
-                  setIsPublic={setIsPublic}
+                  playlistForm={playlistForm}
+                  onPlaylistFormChange={handlePlaylistFormChange}
                   createPlaylist={createPlaylist}
                   onSearch={handleSearch}
                   tracklist={tracklist}
