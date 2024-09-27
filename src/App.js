@@ -9,11 +9,15 @@ const spotifyApi = new SpotifyWebApi();
 // The App component handles all search logic and states
 
 export default function App() {
-  
+
+  // ======================================================================================
   // State Definitions
+  // ======================================================================================
+
   // Search and Tracklist states
-  const [tracks, setTracks] = useState([]); 
-  const [tracklist, setTracklist] = useState([]);
+  //const [searchInput, setSearchInput] = useState('');
+  const [tracks, setTracks] = useState([]);         // Tracks returned from Spotify API search
+  const [tracklist, setTracklist] = useState([]);   // Tracks mapped to display in Search Results
 
   // Store track title, artist & uri for Playlist display
   const [selectedTracks, setSelectedTracks] = useState([]);
@@ -25,12 +29,10 @@ export default function App() {
     isPublic: true,
   });
 
-  /* Form states for Playlist creation
-  const [playlistName, setPlaylistName] = useState('');
-  const [description, setDescription] = useState('');
-  const [isPublic, setIsPublic] = useState(true);
-*/
-
+  // ======================================================================================
+  // Functions
+  // ======================================================================================
+  
   // Function to handle search logic, accepting tracks
   const handleSearch = (tracks) => {
     setTracks(tracks);
@@ -62,7 +64,7 @@ export default function App() {
     }
   };
 
-  // Function to handle Playlist name, description and Playlist status changes
+  // Function to handle Playlist name, description and public/private changes
   const handlePlaylistFormChange = (field, value) => {
     setPlaylistForm(prev => ({ ...prev, [field]: value }));
   };
