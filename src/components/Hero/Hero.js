@@ -76,12 +76,12 @@ export default function Hero({
                                 checked={playlistForm.isPublic}
                                 onChange={(e) => onPlaylistFormChange('isPublic', e.target.checked)}
                             />
-                            <br></br>
+                            <br />
                             <Button variant="primary" onClick={createPlaylist}>
                                 Save Playlist to My Spotify
                             </Button>
                         </Form>
-                        <br></br>
+                        <br />
                     </div>
                 </Col>
             </Row>

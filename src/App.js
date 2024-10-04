@@ -84,13 +84,9 @@ export default function App() {
         await spotifyApi.addTracksToPlaylist(playlist.id, trackURIs);
       }
 
-      // Reset Playlist creator and Search after Playlist is saved
+      // Reset Playlist creator and Search states after Playlist is saved
       alert('Playlist created successfully! Open your Spotify app to listen and alter it as you wish!');
-      setPlaylistForm({
-        name: '',
-        description: '',
-        isPublic: true,
-      });
+      setPlaylistForm({ name: '', description: '', isPublic: true });
       setSelectedTracks([]);
       setTracklist([]);
     } catch (error) {

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button } from 'react-bootstrap';
+import axios from 'axios';
 import './Connector.css';
 
 function generateRandomString(length) {
@@ -31,6 +32,18 @@ var AUTH_URL = 'https://accounts.spotify.com/authorize';
     AUTH_URL += '&state=' + encodeURIComponent(STATE);
 
     console.log(AUTH_URL);
+
+export const loginUrl = `https://accounts.spotify.com/authorize?client_id=${process.env.REACT_APP_SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(process.env.REACT_APP_SPOTIFY_REDIRECT_URI)}&scope=${encodeURIComponent(SCOPES)}`;
+
+export const getTokens = async (code) => {
+    const response = await axios.post('/api/token', { code });
+    return response.data;
+};
+    
+export const refreshAccessToken = async (refresh_token) => {
+    const response = await axios.post('/api/refresh_token', { refresh_token });
+    return response.data;
+};
 
 const getReturnedParamFromSpotifyAuth = (href) => {           
     const url = new URL(href);                                   

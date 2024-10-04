@@ -9,7 +9,7 @@ require('dotenv').config();
 // Create an Express app
 const app = express();
 
-// Middleware
+// Middleware for CORS, 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
