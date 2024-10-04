@@ -5,7 +5,7 @@ import axios from 'axios';
 import './Connector.css';
 
 const CLIENT_ID = '06a0796f96084b688f70432ded3692e0';
-const REDIRECT_URI = 'http://localhost:3000/callback';
+const REDIRECT_URI = 'http://localhost:3000';
 const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize';
 const RESPONSE_TYPE = 'code';
 const SCOPES = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private';
@@ -23,7 +23,7 @@ export default function Connector() {
         }
     }, []);
     
-    // This function is used to generate a code challenge for the Spotify login process.
+    // This async function is used to generate a code challenge for the Spotify login process.
     // Using the PKCE (Proof Key for Code Exchange) method to securely authenticate the user.
     // Generates a random string and encodes it using SHA-256 to create a code challenge, which is used to verify the authenticity of the login process.
     // The code verifier is stored locally to be sent later to Spotify to verify the app requesting the token is the same as the one that started the process.
@@ -40,7 +40,9 @@ export default function Connector() {
         return { codeVerifier, codeChallenge: base64Digest };
     };
 
-    // This function is used to handle the login process.
+    // This async function is used to handle the login process on button click
+    // Calls code verifier function, stores it locally and constructs the auth URL with the necessary parameters.
+    // It then redirects the user to the Spotify login page.
     const handleLogin = async () => {
         const { codeVerifier, codeChallenge } = await generateCodeChallenge();
         localStorage.setItem('codeVerifier', codeVerifier);
@@ -59,6 +61,11 @@ export default function Connector() {
         window.location.href = authUrl.toString();
     };
 
+
+    // This async function is used to exchange the authorization code for an access token.
+    // Retrieves the code verifier from local storage and constructs the request body with the necessary parameters.
+    // Sends a POST request to the Spotify token endpoint to exchange the code for an access token.
+    // Sets the access token in the state and stores it locally.
     const exchangeCodeForToken = async (code) => {
         const codeVerifier = localStorage.getItem('codeVerifier');
 
@@ -82,12 +89,17 @@ export default function Connector() {
         }
     };
 
-    // Kept for compatibility, but now used in generateCodeChallenge
+    // This function generates a random string of a given length.
+    // Used in generateCodeChallenge to create a code verifier.
     function generateRandomString(length) {
         const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         return Array.from({ length }, () => charset[Math.floor(Math.random() * charset.length)]).join('');
     }
 
+    // This function is used to render the Connector component.
+    // If the access token does not exist, it displays a button to connect to Spotify.
+    // If the access token exists, it displays a message indicating that the user is connected to Spotify.
+    // Connector is rendered within the Hero section of the App.js file.
     return (
         <div className="Connector">
             {!accessToken ? (
