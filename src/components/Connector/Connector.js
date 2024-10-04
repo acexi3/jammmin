@@ -4,6 +4,10 @@ import { Button } from 'react-bootstrap';
 import axios from 'axios';
 import './Connector.css';
 
+// ======================================================================================
+// Spotify Credential Declarations
+// ======================================================================================
+
 const CLIENT_ID = '06a0796f96084b688f70432ded3692e0';
 const REDIRECT_URI = 'http://localhost:3000';
 const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize';
@@ -11,7 +15,16 @@ const RESPONSE_TYPE = 'code';
 const SCOPES = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private';
   
 export default function Connector() {   
+    
+    // ======================================================================================
+    // State Declarations
+    // ======================================================================================
+
     const [accessToken, setAccessToken] = useState(null);
+
+    // ======================================================================================
+    // Hooks
+    // ======================================================================================
 
     // useEffect handles the callback from Spotify after successful login and exchanges the authorization code for an access token.
     useEffect(() => {
@@ -22,7 +35,11 @@ export default function Connector() {
             exchangeCodeForToken(code); // If code now exists, exchanges the authorization code for an access token.
         }
     }, []);
-    
+
+    // ======================================================================================
+    // Functions
+    // ======================================================================================
+
     // This async function is used to generate a code challenge for the Spotify login process.
     // Using the PKCE (Proof Key for Code Exchange) method to securely authenticate the user.
     // Generates a random string and encodes it using SHA-256 to create a code challenge, which is used to verify the authenticity of the login process.

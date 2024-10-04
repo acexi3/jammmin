@@ -11,7 +11,7 @@ const spotifyApi = new SpotifyWebApi();
 export default function App() {
 
   // ======================================================================================
-  // State Definitions
+  // State Declarations
   // ======================================================================================
 
   // Search and Tracklist states
@@ -26,11 +26,11 @@ export default function App() {
   const [playlistForm, setPlaylistForm] = useState({
     name: '',
     description: '',
-    isPublic: true,
+    isPublic: true
   });
 
   // ======================================================================================
-  // Functions
+  // Functions & Hooks
   // ======================================================================================
   
   // Function to handle search logic, accepting tracks
@@ -94,6 +94,10 @@ export default function App() {
       alert('Failed to create Playlist.');
     }
   };
+
+  // ======================================================================================
+  // Render
+  // ====================================================================================== 
 
   return (
     <>

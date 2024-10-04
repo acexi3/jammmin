@@ -21,9 +21,12 @@
   },
   "scripts": {
     "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
+    "start-backend": "npm start --prefix spotify-backend",
+    "start-all": "concurrently \"npm start\" \"npm run start-backend\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "dev": "npm run dev --prefix spotify-backend"
   },
   "eslintConfig": {
     "extends": [
