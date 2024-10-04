@@ -1,97 +1,7 @@
-import React, { useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button } from 'react-bootstrap';
-import axios from 'axios';
-import './Connector.css';
-
-function generateRandomString(length) {
-    const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let result = "";
- 
-    for (let i = 0; i < length; i++) {
-       const randomIndex = Math.floor(Math.random() * charset.length);
-       result += charset[randomIndex];
-    }
-    return result;
- };
-
-var CLIENT_ID = '06a0796f96084b688f70432ded3692e0';
-var REDIRECT_AFTER_LOGIN = 'http://localhost:3000';
-    
-var STATE = generateRandomString(16);
-var stateKey = 'spotify_state'; 
-localStorage.setItem(stateKey, STATE);
-
-var SCOPES = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private';
-    
-var AUTH_URL = 'https://accounts.spotify.com/authorize';
-    AUTH_URL += '?response_type=code';
-    AUTH_URL += '&client_id=' + encodeURIComponent(CLIENT_ID);
-    AUTH_URL += '&scope=' + encodeURIComponent(SCOPES);
-    AUTH_URL += '&redirect_uri=' + encodeURIComponent(REDIRECT_AFTER_LOGIN);
-    AUTH_URL += '&state=' + encodeURIComponent(STATE);
-
-    console.log(AUTH_URL);
-
-export const loginUrl = `https://accounts.spotify.com/authorize?client_id=${process.env.REACT_APP_SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(process.env.REACT_APP_SPOTIFY_REDIRECT_URI)}&scope=${encodeURIComponent(SCOPES)}`;
-
-export const getTokens = async (code) => {
-    const response = await axios.post('/api/token', { code });
-    return response.data;
-};
-    
-export const refreshAccessToken = async (refresh_token) => {
-    const response = await axios.post('/api/refresh_token', { refresh_token });
-    return response.data;
-};
-
-const getReturnedParamFromSpotifyAuth = (href) => {           
-    const url = new URL(href);                                   
-    const queryParams = url.hash.substring(1).split('&');       
-    const paramsSplitUp = queryParams.reduce((accumulator, currentValue) => { 
-        const [key, value] = currentValue.split("="); 
-        accumulator[key] = value; 
-        return accumulator; 
-    }, {}); 
-        
-    return paramsSplitUp; 
-}; 
-    
-export default function Connector() {   
-    
-    useEffect(() => {
-        if (window.location.href) {
-            const { access_token, 
-                    expires_in, 
-                } = getReturnedParamFromSpotifyAuth(window.location.href);
-
-            console.log({ access_token, expires_in });
-
-            localStorage.clear();
-            localStorage.setItem("accessToken", access_token);
-            localStorage.setItem("expiresIn", expires_in);
-        }
-    });
-        
-    return (
-        <>
-        <div className="Connector">
-            {console.log("send off to Spotify login page invoked.")}
-            <Button onClick={() => window.open(AUTH_URL, '_blank') }>Connect Me to My Spotify</Button>
-        </div>
-        </>
-    );
-}
-
-
-
-// ======================================================================================
-// Rewrite of Connector component using OAuth2
-/* 
-
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button } from 'react-bootstrap';
+import axios from 'axios';
 import './Connector.css';
 
 const CLIENT_ID = '06a0796f96084b688f70432ded3692e0';
@@ -99,44 +9,42 @@ const REDIRECT_URI = 'http://localhost:3000/callback';
 const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize';
 const RESPONSE_TYPE = 'code';
 const SCOPES = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private';
-
-function Connector() {
+  
+export default function Connector() {   
     const [accessToken, setAccessToken] = useState(null);
 
+    // useEffect handles the callback from Spotify after successful login and exchanges the authorization code for an access token.
     useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-
+        const urlParams = new URLSearchParams(window.location.search); // Creates URLSearchParams object from the URL's query string.
+        const code = urlParams.get('code'); // Retrieves the 'code' parameter from the URL.
+        
         if (code) {
-            exchangeCodeForToken(code);
+            exchangeCodeForToken(code); // If code now exists, exchanges the authorization code for an access token.
         }
     }, []);
-
-    const generateCodeVerifier = (length) => {
-        let text = '';
-        let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     
-        for (let i = 0; i < length; i++) {
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-        }
-        return text;
-    }
-
-    const generateCodeChallenge = async (codeVerifier) => {
-        const data = new TextEncoder().encode(codeVerifier);
+    // This function is used to generate a code challenge for the Spotify login process.
+    // Using the PKCE (Proof Key for Code Exchange) method to securely authenticate the user.
+    // Generates a random string and encodes it using SHA-256 to create a code challenge, which is used to verify the authenticity of the login process.
+    // The code verifier is stored locally to be sent later to Spotify to verify the app requesting the token is the same as the one that started the process.
+    const generateCodeChallenge = async () => {
+        const codeVerifier = generateRandomString(128);
+        const encoder = new TextEncoder();
+        const data = encoder.encode(codeVerifier);
         const digest = await window.crypto.subtle.digest('SHA-256', data);
-        return btoa(String.fromCharCode.apply(null, [...new Uint8Array(digest)]))
+        const base64Digest = btoa(String.fromCharCode.apply(null, new Uint8Array(digest)))
             .replace(/\+/g, '-')
             .replace(/\//g, '_')
             .replace(/=+$/, '');
-    }
 
+        return { codeVerifier, codeChallenge: base64Digest };
+    };
+
+    // This function is used to handle the login process.
     const handleLogin = async () => {
-        const codeVerifier = generateCodeVerifier(128);
-        const codeChallenge = await generateCodeChallenge(codeVerifier);
-    
-        localStorage.setItem('code_verifier', codeVerifier);
-    
+        const { codeVerifier, codeChallenge } = await generateCodeChallenge();
+        localStorage.setItem('codeVerifier', codeVerifier);
+
         const authUrl = new URL(AUTH_ENDPOINT);
         const params = {
             client_id: CLIENT_ID,
@@ -144,51 +52,49 @@ function Connector() {
             redirect_uri: REDIRECT_URI,
             code_challenge_method: 'S256',
             code_challenge: codeChallenge,
-            scope: SCOPES,
+            scope: SCOPES
         };
-    
+
         authUrl.search = new URLSearchParams(params).toString();
-        window.location = authUrl.toString();
-    }
+        window.location.href = authUrl.toString();
+    };
 
     const exchangeCodeForToken = async (code) => {
-        const codeVerifier = localStorage.getItem('code_verifier');
-    
-        const response = await fetch('https://accounts.spotify.com/api/token', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
+        const codeVerifier = localStorage.getItem('codeVerifier');
+
+        try {
+            const response = await axios.post('https://accounts.spotify.com/api/token', {
                 client_id: CLIENT_ID,
                 grant_type: 'authorization_code',
                 code,
                 redirect_uri: REDIRECT_URI,
-                code_verifier: codeVerifier,
-            }),
-        });
-    
-        const data = await response.json();
-        if (response.ok) {
-            setAccessToken(data.access_token);
+                code_verifier: codeVerifier
+            }, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            });
+
             // Here you would typically store the token securely and set up a refresh mechanism
-        } else {
-            console.error('Error exchanging code for token', data);
-            // Handle error (e.g., show error message to user)
+            setAccessToken(response.data.access_token); 
+        } catch (error) {
+            console.error('Error exchanging code for token:', error); // Handle error appropriately
         }
+    };
+
+    // Kept for compatibility, but now used in generateCodeChallenge
+    function generateRandomString(length) {
+        const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        return Array.from({ length }, () => charset[Math.floor(Math.random() * charset.length)]).join('');
     }
 
     return (
         <div className="Connector">
             {!accessToken ? (
-                <Button onClick={handleLogin}>Connect to Spotify</Button>
+                <Button onClick={handleLogin}>Connect Me to My Spotify</Button>
             ) : (
-                <p>Connected to Spotify</p>
-            )}
+                <p>You are Connected to Your Spotify</p>
+            )}            
         </div>
     );
 }
-
-export default Connector;
-
-*/
