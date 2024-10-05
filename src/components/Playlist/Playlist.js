@@ -4,7 +4,8 @@ import './Playlist.css';
 
 export default function Playlist({ selectedTracks }) {
 
-  // Display the selected tracks for the Playlist   
+  // Display the selected tracks for the Playlist 
+  // Selected tracks are passed from App.js
   return (
     <div className="SonglistContainer">
       

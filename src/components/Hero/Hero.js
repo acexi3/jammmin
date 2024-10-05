@@ -1,4 +1,4 @@
-import React from 'react';
+import { React, useState } from 'react';
 import Connector from '../Connector/Connector';
 import SearchBar from '../SearchBar/SearchBar';
 import Tracklist from '../Tracklist/Tracklist';
@@ -19,6 +19,8 @@ export default function Hero({
     onTrackSelect,
     selectedTracks 
 }) {
+    // State to hold the access token
+    const [accessToken, setAccessToken] = useState(null);
 
     return (
         <Container className="HeroContainer"
@@ -44,7 +46,7 @@ export default function Hero({
                         <h1>Looking for Music?</h1>
                         <h5><p>Create your Spotify playlists with ease, here.</p></h5>
                         <br/>
-                        <Connector />
+                        <Connector onAccessTokenChange={setAccessToken} />
                     </div>
                 </Col>
                 {/* Playlist Creator - name & describe your playlist, public or private and save it */}
@@ -87,7 +89,7 @@ export default function Hero({
             </Row>
             {/* Row two with one column: SearchBar - to search for songs and-or artists */}
             <Row className="mt-3">
-                <SearchBar onSearch={onSearch} />
+                <SearchBar onSearch={onSearch} accessToken={accessToken} />
             </Row>
             <Row> {/* Row three with two columns/sections: 1. Search results (tracklist) 2. Tracks to add to playlist */}
                 <Col className="Tracklist">

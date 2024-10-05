@@ -20,6 +20,7 @@ export default function SearchBar({ accessToken, onSearch}) {
         console.log("Search Input:", searchInput);  // Log the search input
         
         if (!accessToken) {
+            alert("No access token available");
             console.error("No access token available");
             return;
         }

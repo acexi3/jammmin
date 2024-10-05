@@ -14,8 +14,7 @@ export default function App() {
   // State Declarations
   // ======================================================================================
 
-  // Search and Tracklist states
-  //const [searchInput, setSearchInput] = useState('');
+  // Tracklist states
   const [tracks, setTracks] = useState([]);         // Tracks returned from Spotify API search
   const [tracklist, setTracklist] = useState([]);   // Tracks mapped to display in Search Results
 
