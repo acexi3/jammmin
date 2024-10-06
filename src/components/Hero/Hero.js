@@ -19,8 +19,9 @@ export default function Hero({
     onTrackSelect,
     selectedTracks 
 }) {
-    // State to hold the access token
+    // State to hold the access & refresh tokens
     const [accessToken, setAccessToken] = useState(null);
+    const [refreshToken, setRefreshToken] = useState(null);
 
     return (
         <Container className="HeroContainer"
@@ -46,7 +47,12 @@ export default function Hero({
                         <h1>Looking for Music?</h1>
                         <h5><p>Create your Spotify playlists with ease, here.</p></h5>
                         <br/>
-                        <Connector onAccessTokenChange={setAccessToken} />
+                        <Connector 
+                            accessToken={accessToken} 
+                            refreshToken={refreshToken} 
+                            onAccessTokenChange={setAccessToken} 
+                            onRefreshTokenChange={setRefreshToken}
+                        />
                     </div>
                 </Col>
                 {/* Playlist Creator - name & describe your playlist, public or private and save it */}
