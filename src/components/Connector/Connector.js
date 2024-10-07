@@ -76,7 +76,7 @@ export default function Connector({
         }
 
         try {
-            console.log('Sendding token exchange request to Spotify...');
+            console.log('Sending token exchange request to Spotify...');
             const response = await axios.post('https://accounts.spotify.com/api/token', 
                 new URLSearchParams({
                 client_id: CLIENT_ID,

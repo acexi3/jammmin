@@ -122,7 +122,7 @@ export default function Hero({
             </Row>
             {/* Row two with one column: SearchBar - to search for songs and-or artists */}
             <Row className="mt-3">
-                <SearchBar onSearch={onSearch} accessToken={accessToken} refreshToken={refreshToken} />
+                <SearchBar onSearch={onSearch} accessToken={accessToken} />
             </Row>
             <Row> {/* Row three with two columns/sections: 1. Search results (tracklist) 2. Tracks to add to playlist */}
                 <Col className="Tracklist">
@@ -136,9 +136,8 @@ export default function Hero({
                     <div>
                         <Playlist selectedTracks={selectedTracks} />
                     </div>
-                </Container>
-                
-          </Row>
+                </Container>  
+            </Row>
         </Container>
     );
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import Hero from './components/Hero/Hero';
 import './App.css';
@@ -6,20 +6,11 @@ import SpotifyWebApi from 'spotify-web-api-js';
 
 const spotifyApi = new SpotifyWebApi();
 
-// The App component handles all search logic and states
-
 export default function App() {
 
-  // ======================================================================================
-  // State Declarations
-  // ======================================================================================
-
   // Tracklist states
-  const [tracks, setTracks] = useState([]);         // Tracks returned from Spotify API search
   const [tracklist, setTracklist] = useState([]);   // Tracks mapped to display in Search Results
-
-  // Store track title, artist & uri for Playlist display
-  const [selectedTracks, setSelectedTracks] = useState([]);
+  const [selectedTracks, setSelectedTracks] = useState([]); // Store track title, artist & uri for Playlist display
 
   // Store related playlist state variables as a state object
   const [playlistForm, setPlaylistForm] = useState({
@@ -33,24 +24,9 @@ export default function App() {
   // ======================================================================================
   
   // Function to handle search logic, accepting tracks
-  const handleSearch = (tracks) => {
-    setTracks(tracks);
+  const handleSearch = (searchResults) => {
+    setTracklist(searchResults);
   };
-
-  // UseEffect updating Tracklist state after searches
-  useEffect(() => {
-    if (tracks.length > 0) {
-      const mappedTracks = tracks.map((track) => ({
-        id: track.id,
-        name: track.name,
-        artist: track.artists[0].name,
-        album: track.album.name,
-        albumArt: track.album.images[0].url,
-        uri: track.uri // Include URI for adding to playlist
-      }));
-      setTracklist(mappedTracks);
-    }
-  }, [tracks]);
 
   // Function to handle track selection
   const handleTrackSelection = (track, isSelected) => {
@@ -58,7 +34,7 @@ export default function App() {
       setSelectedTracks((prevTracks) => [...prevTracks, track]);
     } else {
       setSelectedTracks((prevTracks) =>
-        prevTracks.filter((t) => t.uri !== track.uri)
+        prevTracks.filter((t) => t.id !== track.id)
       );
     }
   };
@@ -103,8 +79,7 @@ export default function App() {
       <div className="App">
         <Container>
           <Row>
-            <Col>
-              <div>
+            <Col>              
                 <Hero 
                   className="fixed-top" bg="light" expand="lg"
                   playlistForm={playlistForm}
@@ -114,8 +89,7 @@ export default function App() {
                   tracklist={tracklist}
                   onTrackSelect={handleTrackSelection}
                   selectedTracks={selectedTracks}
-                />
-              </div>
+                />              
             </Col>
           </Row>
         </Container>
