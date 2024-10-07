@@ -5,24 +5,30 @@ import Tracklist from '../Tracklist/Tracklist';
 import Playlist from '../Playlist/Playlist';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import './Hero.css';
-import backgroundImage from '../../images/compose_03.jpg';
+import backgroundImage from '../../images/compose_01.jpg';
+import SpotifyWebApi from 'spotify-web-api-js';
+
+const spotifyApi = new SpotifyWebApi();
 
 // The Hero is the app, essentially. The hub of functionality.
 // Parent of Connector, Playlist, SearchBar and Tracklist components.
 
-export default function Hero({ 
-    playlistForm,
-    onPlaylistFormChange,
-    createPlaylist, 
-    onSearch,
-    tracklist,
-    onTrackSelect,
-    selectedTracks 
-}) {
-    // State to hold the access & refresh tokens
-    const [accessToken, setAccessToken] = useState(null);
-    const [refreshToken, setRefreshToken] = useState(null);
+export default function Hero() 
+{ 
+    const [accessToken, setAccessToken] = useState(null); // State to hold the access token
+    const [refreshToken, setRefreshToken] = useState(null); // State to hold the refresh token
+    const [tracklist, setTracklist] = useState([]);   // Tracks mapped to display in Search Results
+    const [selectedTracks, setSelectedTracks] = useState([]); // Store track title, artist & uri for Playlist display
+    const [playlistForm, setPlaylistForm] = useState({ // Store Playlist name, description and public/private
+        name: '',
+        description: '',
+        isPublic: true
+    });
 
+  // ======================================================================================
+  // Functions & Hooks
+  // ======================================================================================
+    
     // Log the access and refresh tokens to the console when changed
     useEffect(() => {
         console.log("Access Token changed:", accessToken);
@@ -49,6 +55,68 @@ export default function Hero({
         console.log("Setting new refresh token:", newToken);
         setRefreshToken(newToken);
     }
+
+    // Function to handle search logic, accepting tracks
+    const handleSearch = (searchResults) => {
+        setTracklist(searchResults);
+    };
+
+    // Function to handle track selection
+    const handleTrackSelection = (track, isSelected) => {
+        if (isSelected) {
+            setSelectedTracks((prevTracks) => [...prevTracks, track]);
+        } else {
+            setSelectedTracks((prevTracks) =>
+            prevTracks.filter((t) => t.id !== track.id)
+            );
+        }
+    };
+
+    // Function to handle Playlist name, description and public/private changes
+    const handlePlaylistFormChange = (field, value) => {
+        setPlaylistForm(prev => ({ ...prev, [field]: value }));
+    };
+
+    // Async Function to create Playlist name/description and add tracks to Playlist
+    const createPlaylist = async () => {
+        try {          
+            spotifyApi.setAccessToken(accessToken); // Set the access token for the Spotify Web API
+
+            const user = await spotifyApi.getMe();
+            const userId = user.id;
+            const playlist = await spotifyApi.createPlaylist(userId, playlistForm); // Create the Playlist
+
+        if (selectedTracks.length > 0) { // Then add tracks to the Playlist
+                const trackURIs = selectedTracks.map((track) => track.uri);
+                await spotifyApi.addTracksToPlaylist(playlist.id, trackURIs);
+        } 
+            // Reset Playlist creator and Search states after Playlist is saved
+            alert('Playlist created successfully! Open your Spotify app to listen and alter it as you wish!');
+            setPlaylistForm({ name: '', description: '', isPublic: true });
+            setSelectedTracks([]);
+            setTracklist([]);
+        } catch (error) {
+            console.error('Error creating Playlist:', error);
+            if (error.status === 401) { // If access token is expired/unauthorized access
+                console.log('Token is expired. Attempting to refresh...');
+                // Assuming refreshToken is available and updates the token 
+                const refreshed = await refreshToken();
+                if (refreshed) {
+                    console.log('Token refreshed, retrying playlist creation.');
+                    createPlaylist(); // Retry creating the Playlist
+                } else {
+                    console.log('Failed to refresh token. Log in again.');
+                    alert('Your session has expired. Please log in again.');
+                }
+            } else {
+                alert('Failed to create Playlist. Please try again');
+            }
+        }
+    };
+    
+  // ======================================================================================
+  // Render
+  // ====================================================================================== 
 
     return (
         <Container className="HeroContainer"
@@ -79,6 +147,7 @@ export default function Hero({
                             refreshToken={refreshToken} 
                             onAccessTokenChange={handleAccessTokenChange} 
                             onRefreshTokenChange={handleRefreshTokenChange}
+
                         />
                     </div>
                 </Col>
@@ -92,7 +161,7 @@ export default function Hero({
                                 type="text"
                                 placeholder="What will you call it?"
                                 value={playlistForm.name}
-                                onChange={(e) => onPlaylistFormChange('name', e.target.value)}
+                                onChange={(e) => handlePlaylistFormChange('name', e.target.value)}
                                 />
                             </Form.Group>
 
@@ -101,7 +170,7 @@ export default function Hero({
                                 type="text"
                                 placeholder="Playlist Description (optional)"
                                 value={playlistForm.description}
-                                onChange={(e) => onPlaylistFormChange('description', e.target.value)}
+                                onChange={(e) => handlePlaylistFormChange('description', e.target.value)}
                                 />
                             </Form.Group>
 
@@ -109,7 +178,7 @@ export default function Hero({
                                 type="checkbox"
                                 label="Public"
                                 checked={playlistForm.isPublic}
-                                onChange={(e) => onPlaylistFormChange('isPublic', e.target.checked)}
+                                onChange={(e) => handlePlaylistFormChange('isPublic', e.target.checked)}
                             />
                             <br />
                             <Button variant="primary" onClick={createPlaylist}>
@@ -122,19 +191,24 @@ export default function Hero({
             </Row>
             {/* Row two with one column: SearchBar - to search for songs and-or artists */}
             <Row className="mt-3">
-                <SearchBar onSearch={onSearch} accessToken={accessToken} />
+                <SearchBar onSearch={handleSearch} accessToken={accessToken} />
             </Row>
             <Row> {/* Row three with two columns/sections: 1. Search results (tracklist) 2. Tracks to add to playlist */}
                 <Col className="Tracklist">
                     {tracklist.length > 0}
                     <div>
-                        <Tracklist tracks={tracklist} onTrackSelect={onTrackSelect} />
+                        <Tracklist tracks={tracklist} onTrackSelect={handleTrackSelection} />
                     </div>
                 </Col>
                 
                 <Container className="PlaylistContainer">              
                     <div>
-                        <Playlist selectedTracks={selectedTracks} />
+                        <Playlist 
+                            selectedTracks={selectedTracks}
+                            playlistForm={playlistForm}
+                            onPlaylistFormChange={handlePlaylistFormChange}
+                            createPlaylist={createPlaylist}
+                        />
                     </div>
                 </Container>  
             </Row>
