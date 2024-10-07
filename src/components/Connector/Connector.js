@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button } from 'react-bootstrap';
 import axios from 'axios';
@@ -13,7 +13,11 @@ const REDIRECT_URI = 'http://localhost:3000';
 const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize';
 const RESPONSE_TYPE = 'code';
 const SCOPES = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-public playlist-modify-private';
-  
+
+// ======================================================================================
+// Connector Component
+// ======================================================================================
+
 export default function Connector({
     accessToken,
     onAccessTokenChange,
@@ -23,13 +27,21 @@ export default function Connector({
     const [expiresAt, setExpiresAt] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+    const isExchangingCode = useRef(false);
 
     // This function is used to handle the response from the Spotify token endpoint.
     // Sets the access token, refresh token, and expiration time in the state and locally.  
     const handleTokenResponse = useCallback((data) => {
         console.log('Handling token response:', data);
-        onAccessTokenChange(data.access_token);
-        onAccessTokenChange(data.refresh_token || refreshToken); // Use new refresh token if provided, otherwise keep the existing one
+        
+        // Update access token and refresh token
+        if (onAccessTokenChange) {
+            onAccessTokenChange(data.access_token);
+        }
+        if (onRefreshTokenChange) {
+            onRefreshTokenChange(data.refresh_token || refreshToken); // Use new refresh token if provided, otherwise keep the existing one
+        }
+
         const expiresAt = Date.now() + data.expires_in * 1000;
         setExpiresAt(expiresAt);
 
@@ -41,15 +53,10 @@ export default function Connector({
         setIsLoading(false);
         setError(null);
 
-        // Notify parent component of the new access token
-        if (onAccessTokenChange) {
-            onAccessTokenChange(data.access_token);
-        };
-
         // Remove the code parameter from the URL
         const newUrl = window.location.pathname + window.location.hash;
         window.history.replaceState({}, document.title, newUrl);
-    }, [refreshToken, onAccessTokenChange]);  // Use refreshToken in the dependency array to ensure the function is recreated if refreshToken changes.
+    }, [refreshToken, onAccessTokenChange, onRefreshTokenChange]);  // Use refreshToken in the dependency array to ensure the function is recreated if refreshToken changes.
 
     // This async function is used to exchange the authorization code for an access token.
     // Retrieves the code verifier from local storage and constructs the request body with the necessary parameters.
@@ -64,7 +71,7 @@ export default function Connector({
         if (!codeVerifier) {
             console.error('No code verifier found in local storage');
             setError('Authentication failed. Please try again.');
-            setIsLoading(false);
+            //setIsLoading(false);
             return;
         }
 
@@ -104,7 +111,7 @@ export default function Connector({
             onRefreshTokenChange(null);
             setExpiresAt(null);
         } finally {
-            setIsLoading(false);
+            //setIsLoading(false);
             localStorage.removeItem('codeVerifier'); // Clear code verifier after use
         }
     }, [ handleTokenResponse, onAccessTokenChange, onRefreshTokenChange ]); // Include handleTokenResponse in the dependency array to ensure the function is recreated if handleTokenResponse changes.
@@ -143,19 +150,30 @@ export default function Connector({
 
     // useEffect handles the callback from Spotify after successful login and exchanges the authorization code for an access token.
     useEffect(() => {
-        const checkAuthStatus = () => {
+        const checkAuthStatus = async () => {
             console.log('Checking authentication status...');
+            if (isExchangingCode.current) {
+                console.log('Already exchanging code for tokens, skipping check...');
+                return; 
+            }
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get('code');
             
-            if (code && !accessToken) {
+            if (code && !accessToken && !isExchangingCode.current) {
                 console.log('Received new code from Spotify, initiating token exchange...');
+                isExchangingCode.current = true;
                 setIsLoading(true);
-                exchangeCodeForToken(code);
+                //exchangeCodeForToken(code);
+                try {
+                    await exchangeCodeForToken(code);
+                } finally {
+                    isExchangingCode.current = false;
+                    setIsLoading(false);
+                }
             } else if (accessToken) {
                 console.log('Access token already exists, skipping token exchange...');
             } else {
-                console.log('No code received from Spotify, checking local storage...');
+                console.log('No code received from Spotify, checking localStorage...');
                 const storedAccessToken = localStorage.getItem('spotifyAccessToken');
                 const storedRefreshToken = localStorage.getItem('spotifyRefreshToken');
                 const storedExpiresAt = localStorage.getItem('spotifyExpiresAt');
@@ -186,7 +204,7 @@ export default function Connector({
         };
     
         checkAuthStatus();
-    }, [exchangeCodeForToken, onAccessTokenChange, onRefreshTokenChange]); // Include exchangeCodeForToken in the dependency array to ensure the function is recreated if exchangeCodeForToken changes.
+    }, [exchangeCodeForToken, onAccessTokenChange, onRefreshTokenChange, accessToken]); // Include exchangeCodeForToken in the dependency array to ensure the function is recreated if exchangeCodeForToken changes.
 
     // useEffect handles the refresh of the access token 5 minutes before it expires.
     useEffect(() => {
@@ -207,7 +225,7 @@ export default function Connector({
     }, [accessToken, refreshToken, expiresAt, isLoading, error]);
 
     // ======================================================================================
-    // Functions
+    // Utility Functions
     // ======================================================================================
    
     // This async function is used to handle the login process on button click

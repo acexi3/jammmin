@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, InputGroup, FormControl, Button } from 'react-bootstrap';
 
-export default function SearchBar({ accessToken, onSearch}) {
+export default function SearchBar({ accessToken, refreshToken, onSearch}) {
     // ======================================================================================
     // State Declaration - searchInput
     // ======================================================================================
@@ -17,6 +17,7 @@ export default function SearchBar({ accessToken, onSearch}) {
     // searches for song title or artist and returns image, id, name, and artists to display to user 
     const search = async () => {
         console.log("Access Token:", accessToken);  // Log the access token (be careful with this in production)
+        console.log("Refresh Token:", refreshToken);  // Log the access token (be careful with this in production)
         console.log("Search Input:", searchInput);  // Log the search input
         
         if (!accessToken) {

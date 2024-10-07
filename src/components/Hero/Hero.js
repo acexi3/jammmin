@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Connector from '../Connector/Connector';
 import SearchBar from '../SearchBar/SearchBar';
 import Tracklist from '../Tracklist/Tracklist';
@@ -22,6 +22,33 @@ export default function Hero({
     // State to hold the access & refresh tokens
     const [accessToken, setAccessToken] = useState(null);
     const [refreshToken, setRefreshToken] = useState(null);
+
+    // Log the access and refresh tokens to the console when changed
+    useEffect(() => {
+        console.log("Access Token changed:", accessToken);
+    }, [accessToken]);
+
+    useEffect(() => {
+        console.log("Refresh Token changed:", refreshToken);
+    }, [refreshToken]);
+    
+    // Log a message when the access token is available for API calls
+    useEffect(() => {
+        if (accessToken) {
+            console.log('Access Token is available for API calls.');
+        }
+    }, [accessToken]);
+
+    // Functions to handle changes to the access and refresh tokens
+    const handleAccessTokenChange = (newToken) => {
+        console.log("Setting new access token:", newToken);
+        setAccessToken(newToken);
+    }
+
+    const handleRefreshTokenChange = (newToken) => {
+        console.log("Setting new refresh token:", newToken);
+        setRefreshToken(newToken);
+    }
 
     return (
         <Container className="HeroContainer"
@@ -50,8 +77,8 @@ export default function Hero({
                         <Connector 
                             accessToken={accessToken} 
                             refreshToken={refreshToken} 
-                            onAccessTokenChange={setAccessToken} 
-                            onRefreshTokenChange={setRefreshToken}
+                            onAccessTokenChange={handleAccessTokenChange} 
+                            onRefreshTokenChange={handleRefreshTokenChange}
                         />
                     </div>
                 </Col>
@@ -95,7 +122,7 @@ export default function Hero({
             </Row>
             {/* Row two with one column: SearchBar - to search for songs and-or artists */}
             <Row className="mt-3">
-                <SearchBar onSearch={onSearch} accessToken={accessToken} />
+                <SearchBar onSearch={onSearch} accessToken={accessToken} refreshToken={refreshToken} />
             </Row>
             <Row> {/* Row three with two columns/sections: 1. Search results (tracklist) 2. Tracks to add to playlist */}
                 <Col className="Tracklist">
