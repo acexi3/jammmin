@@ -1,63 +1,40 @@
 import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, InputGroup, FormControl, Button } from 'react-bootstrap';
+import axios from 'axios';
 
-export default function SearchBar({ accessToken, onSearch}) {
-    
-    const [searchInput, setSearchInput] = useState(['']);
-    
-    // This async function retrieves the access token from local storage and then 
-    // searches for song title or artist and returns image, id, name, and artists to display to user 
-    const search = async () => {
-        
-        console.log("Starting search with Access Token...", accessToken);
+export default function SearchBar({ onSearch }) {
+  const [searchInput, setSearchInput] = useState('');
 
-        if (!accessToken) {
-            console.error("No access token available for search");  
-            return;
-        }
-                        
-        try {
-            const response = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(searchInput)}&type=track&limit=40`, {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            });
-            // Check if the response is OK 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);    
-            }
+  const search = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3001/api/search?q=${encodeURIComponent(searchInput)}`, {
+        withCredentials: true
+      });
+      
+      if (response.data.tracks && response.data.tracks.items) {
+        const processedTracks = response.data.tracks.items.map(track => ({
+          id: track.id,
+          name: track.name,
+          artist: track.artists[0].name,
+          album: track.album.name,
+          albumArt: track.album.images[0]?.url,
+          previewUrl: track.preview_url,
+          uri: track.uri
+        }));
+        onSearch(processedTracks);
+      } else {
+        console.error("No data found in response or unexpected data structure:", response.data);
+        onSearch([]);
+      }
+    } catch (error) {
+      console.error("Error searching tracks:", error);
+      onSearch([]);
+    }
+  };
 
-            const data = await response.json();
-            console.log("Raw response : ", data);
-            
-            if (data.tracks && data.tracks.items) {
-                const processedTracks = data.tracks.items.map(track => ({
-                    id: track.id,
-                    name: track.name,
-                    artist: track.artists[0].name,
-                    album: track.album.name,
-                    albumArt: track.album.images[0]?.url,
-                    previewUrl: track.preview_url,
-                    uri: track.uri
-                }));
-                onSearch(processedTracks);
-            } else {
-                console.error("No data found in response or unexpected data structure:", data);
-                onSearch([]);  // Pass an empty array if no results are found
-            }
-        } catch (error) {
-            console.error("Error searching tracks:", error);
-            if (error.response) {
-                console.error("Error response:", await error.response.text());
-            }
-            onSearch([]);  // Pass an empty array in case of error
-        }
-    };
-
-    // ======================================================================================
-    // Render
-    // ======================================================================================
+// ======================================================================================
+// Render
+// ======================================================================================
 
     return (
         <div className="SearchBar">

@@ -5,25 +5,22 @@ import Tracklist from '../Tracklist/Tracklist';
 import Playlist from '../Playlist/Playlist';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import './Hero.css';
-import backgroundImage from '../../images/compose_01.jpg';
-import SpotifyWebApi from 'spotify-web-api-js';
+import axios from 'axios';
+import backgroundImage from '../../images/compose_02.jpg';
 
-const spotifyApi = new SpotifyWebApi();
-
-// The Hero is the app, essentially. The hub of functionality.
-// Parent of Connector, Playlist, SearchBar and Tracklist components.
-
-export default function Hero() 
-{ 
-    const [accessToken, setAccessToken] = useState(null); // State to hold the access token
-    const [refreshToken, setRefreshToken] = useState(null); // State to hold the refresh token
-    const [tracklist, setTracklist] = useState([]);   // Tracks mapped to display in Search Results
-    const [selectedTracks, setSelectedTracks] = useState([]); // Store track title, artist & uri for Playlist display
-    const [playlistForm, setPlaylistForm] = useState({ // Store Playlist name, description and public/private
-        name: '',
-        description: '',
-        isPublic: true
-    });
+export default function Hero() {
+  // State definitions
+  const [accessToken, setAccessToken] = useState(null);
+  const [refreshToken, setRefreshToken] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [tracklist, setTracklist] = useState([]);
+  const [selectedTracks, setSelectedTracks] = useState([]);
+  const [playlistForm, setPlaylistForm] = useState({
+    name: '',
+    description: '',
+    isPublic: true
+  });
 
   // ======================================================================================
   // Functions & Hooks
@@ -46,6 +43,10 @@ export default function Hero()
     }, [accessToken]);
 
     // Functions to handle changes to the access and refresh tokens
+    const handleAuthChange = (authStatus) => {
+        setIsAuthenticated(authStatus);
+    }
+
     const handleAccessTokenChange = (newToken) => {
         console.log("Setting new access token:", newToken);
         setAccessToken(newToken);
@@ -56,9 +57,8 @@ export default function Hero()
         setRefreshToken(newToken);
     }
 
-    // Function to handle search logic, accepting tracks
     const handleSearch = (searchResults) => {
-        setTracklist(searchResults);
+      setTracklist(searchResults);
     };
 
     // Function to handle track selection
@@ -77,43 +77,30 @@ export default function Hero()
         setPlaylistForm(prev => ({ ...prev, [field]: value }));
     };
 
-    // Async Function to create Playlist name/description and add tracks to Playlist
     const createPlaylist = async () => {
-        try {          
-            spotifyApi.setAccessToken(accessToken); // Set the access token for the Spotify Web API
-
-            const user = await spotifyApi.getMe();
-            const userId = user.id;
-            const playlist = await spotifyApi.createPlaylist(userId, playlistForm); // Create the Playlist
-
-        if (selectedTracks.length > 0) { // Then add tracks to the Playlist
-                const trackURIs = selectedTracks.map((track) => track.uri);
-                await spotifyApi.addTracksToPlaylist(playlist.id, trackURIs);
-        } 
-            // Reset Playlist creator and Search states after Playlist is saved
-            alert('Playlist created successfully! Open your Spotify app to listen and alter it as you wish!');
+        try {
+          const response = await axios.post('http://localhost:3001/api/create-playlist', {
+            name: playlistForm.name,
+            description: playlistForm.description,
+            isPublic: playlistForm.isPublic,
+            tracks: selectedTracks.map(track => track.uri)
+          }, {
+            withCredentials: true
+          });
+    
+          if (response.data.success) {
+            alert('Playlist created successfully!');
             setPlaylistForm({ name: '', description: '', isPublic: true });
             setSelectedTracks([]);
-            setTracklist([]);
+          } else {
+            throw new Error(response.data.error);
+          }
         } catch (error) {
-            console.error('Error creating Playlist:', error);
-            if (error.status === 401) { // If access token is expired/unauthorized access
-                console.log('Token is expired. Attempting to refresh...');
-                // Assuming refreshToken is available and updates the token 
-                const refreshed = await refreshToken();
-                if (refreshed) {
-                    console.log('Token refreshed, retrying playlist creation.');
-                    createPlaylist(); // Retry creating the Playlist
-                } else {
-                    console.log('Failed to refresh token. Log in again.');
-                    alert('Your session has expired. Please log in again.');
-                }
-            } else {
-                alert('Failed to create Playlist. Please try again');
-            }
+          console.error('Error creating playlist:', error);
+          alert('Failed to create playlist. Please try again.');
         }
-    };
-    
+      };
+ 
   // ======================================================================================
   // Render
   // ====================================================================================== 
@@ -128,7 +115,7 @@ export default function Hero()
                     rgba(42,42,124,1) 37%, 
                     rgba(0,212,255,1) 100%
                 ), 
-                url(${backgroundImage})`,
+                url(${backgroundImage || ''})`,
                 backgroundBlendMode: 'overlay', // Blending effect
                 backgroundSize: 'cover', 
                 backgroundPosition: 'center',
@@ -143,11 +130,12 @@ export default function Hero()
                         <h5><p>Create your Spotify playlists with ease, here.</p></h5>
                         <br/>
                         <Connector 
-                            accessToken={accessToken} 
-                            refreshToken={refreshToken} 
-                            onAccessTokenChange={handleAccessTokenChange} 
+                            onAuthChange={handleAuthChange}
+                            isAuthenticated={isAuthenticated}
+                            isLoading={isLoading}
+                            setIsLoading={setIsLoading}
+                            onAccessTokenChange={handleAccessTokenChange}
                             onRefreshTokenChange={handleRefreshTokenChange}
-
                         />
                     </div>
                 </Col>
@@ -204,6 +192,10 @@ export default function Hero()
                 <Container className="PlaylistContainer">              
                     <div>
                         <Playlist 
+                            isAuthenticated={isAuthenticated}
+                            setIsAuthenticated={setIsAuthenticated}
+                            isLoading={isLoading}
+                            setIsLoading={setIsLoading}
                             selectedTracks={selectedTracks}
                             playlistForm={playlistForm}
                             onPlaylistFormChange={handlePlaylistFormChange}
