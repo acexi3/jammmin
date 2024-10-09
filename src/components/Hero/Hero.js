@@ -134,6 +134,7 @@ export default function Hero() {
                             isAuthenticated={isAuthenticated}
                             isLoading={isLoading}
                             setIsLoading={setIsLoading}
+                            setIsAuthenticated={setIsAuthenticated}
                             onAccessTokenChange={handleAccessTokenChange}
                             onRefreshTokenChange={handleRefreshTokenChange}
                         />

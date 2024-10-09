@@ -21,7 +21,7 @@
     "express-rate-limit": "^7.4.0",
     "spotify-web-api-node": "^5.0.2"
   },
-  "proxy": "http://localhost:5000",
+  "proxy": "http://localhost:3001",
   "devDependencies": {
     "nodemon": "^3.1.7"
   }
