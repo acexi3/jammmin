@@ -42,6 +42,16 @@ export default function Hero() {
         }
     }, [accessToken]);
 
+    // Use effect to log the setIsAuthenticated function
+    useEffect(() => {
+        console.log('setIsAuthenticated in Hero:', setIsAuthenticated);
+      }, [setIsAuthenticated]);
+
+    // Log to track the authentication state
+    useEffect(() => {
+        console.log('Authentication state changed:', isAuthenticated);
+      }, [isAuthenticated]);
+
     // Functions to handle changes to the access and refresh tokens
     const handleAuthChange = (authStatus) => {
         setIsAuthenticated(authStatus);
@@ -132,9 +142,9 @@ export default function Hero() {
                         <Connector 
                             onAuthChange={handleAuthChange}
                             isAuthenticated={isAuthenticated}
+                            setIsAuthenticated={setIsAuthenticated}
                             isLoading={isLoading}
                             setIsLoading={setIsLoading}
-                            setIsAuthenticated={setIsAuthenticated}
                             onAccessTokenChange={handleAccessTokenChange}
                             onRefreshTokenChange={handleRefreshTokenChange}
                         />
