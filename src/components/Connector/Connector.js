@@ -10,51 +10,42 @@ export default function Connector({
   isLoading,
   setIsLoading,
 }) {
-  
-  useEffect(() => {
-    const checkAuthStatus = async () => {
-      try {
-        const response = await axios.get('http://localhost:3001/api/check-auth', { withCredentials: true });
-        setIsAuthenticated(response.data.isAuthenticated);
-        onAuthChange(response.data.isAuthenticated);
-      } catch (error) {
-        console.error('Error checking auth status:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-
-    const exchangeCodeForTokens = async () => {
-      try {
-        console.log('Code found in URL:', code);
-        const response = await axios.get(`http://localhost:3001/api/callback?code=${code}`, { withCredentials: true });
-        console.log('Token exchange response:', response.data);
-        if (response.data.success) {
-          await checkAuthStatus();
-          // Clear the code from the URL to prevent multiple exchange attempts
-          window.history.replaceState({}, document.title, "/");
-        } else {
-          throw new Error('Token exchange failed');
+    useEffect(() => {
+      const checkAuthStatus = async () => {
+        try {
+          const response = await axios.get('http://localhost:3001/api/check-auth', { withCredentials: true });
+          console.log('Auth status response:', response.data);
+          setIsAuthenticated(response.data.isAuthenticated);
+          onAuthChange(response.data.isAuthenticated);
+        } catch (error) {
+          console.error('Error checking auth status:', error);
+        } finally {
+          setIsLoading(false);
         }
-      } catch (error) {
-        console.error('Error exchanging code for tokens:', error);
-        if (error.response) {
-          console.error('Error response:', error.response.data);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      };
 
-    if (code && !isAuthenticated) {
-      exchangeCodeForTokens();
-    } else if (!isAuthenticated) {
-      checkAuthStatus();
-    }
-  }, [isAuthenticated, setIsAuthenticated, onAuthChange, setIsLoading]);
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+
+      if (code) {
+        console.log('Authorization code found:', code);
+        // Exchange the code for tokens
+        const exchangeCode = async () => {
+          try {
+            const response = await axios.get(`http://localhost:3001/api/callback?code=${code}`, { withCredentials: true });
+            console.log('Token exchange response:', response.data);
+            checkAuthStatus();
+          } catch (error) {
+            console.error('Error exchanging code for tokens:', error);
+          }
+        };
+        exchangeCode();
+        // Clear the code from the URL
+        window.history.replaceState({}, document.title, "/");
+      } else {
+        checkAuthStatus();
+      }
+    }, [onAuthChange, setIsAuthenticated, setIsLoading]);
 
   const handleLogin = () => {
     window.location.href = 'http://localhost:3001/api/login';
