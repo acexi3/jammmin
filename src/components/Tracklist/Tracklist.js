@@ -7,8 +7,6 @@ export default function Tracklist({ tracks, onTrackSelect }) {
 
   const [playingTrack, setPlayingTrack] = useState(null); 
   
-  console.log("Inside <Tracklist /> module", tracks);
-
   // Function to handle the selection of a track
   useEffect(() => {
     return () => {
