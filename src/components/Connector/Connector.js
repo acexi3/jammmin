@@ -43,35 +43,44 @@ export default function Connector({
     checkAuthStatus();
   }, [checkAuthStatus]);
 
+  // useEffect - API call for exchanging code to receive auth tokens 
+  //*************************************************************** */
+
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
-    if (code) {
-      // If there's a code in the URL, exchange it for tokens
-      console.log('Code found in URL:', code);
-      axios.get(`http://localhost:3001/api/callback?code=${code}`, { withCredentials: true })
-        .then((response) => {
-          console.log('Token exchange response:', response.data);
-          if (response.data.success) {
-            checkAuthStatus();
-            // clear the code from the URL to pevent multiple exchange attempts
-            window.history.replaceState({}, document.title, "/");
-          } else {
-            throw new Error('Token exchange failed');
-          }})
-        .catch(error => {
-          console.error('Error exchanging code for tokens:', error);
-          if (error.response) {
-            console.error('Error response:', error.response.data);
-          }
-          // Even if there's an error, try to check auth status
-          checkAuthStatus();
-          setIsLoading(false);
-        });
-    } else {
+  
+    const exchangeCodeForTokens = async () => {
+      try {
+        console.log('Code found in URL:', code);
+        const response = await axios.get(`http://localhost:3001/api/callback?code=${code}`, { withCredentials: true });
+        console.log('Token exchange response:', response.data);
+        if (response.data.success) {
+          await checkAuthStatus();
+          // Clear the code from the URL to prevent multiple exchange attempts
+          window.history.replaceState({}, document.title, "/");
+        } else {
+          throw new Error('Token exchange failed');
+        }
+      } catch (error) {
+        console.error('Error exchanging code for tokens:', error);
+        if (error.response) {
+          console.error('Error response:', error.response.data);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    if (code && !isAuthenticated) {
+      exchangeCodeForTokens();
+    } else if (!isAuthenticated) {
       checkAuthStatus();
     }
-  }, [checkAuthStatus, setIsLoading]);
+  }, [checkAuthStatus, isAuthenticated, setIsLoading]);
+
+// handleLogin and hanlelogOut functions
+// ************************************************************************************** */  
 
   const handleLogin = () => {
     console.log('Login button clicked in Connector');
@@ -92,6 +101,9 @@ export default function Connector({
     return <p>Loading...</p>;
   }
 
+
+// Return the login/logout button render
+// ************************************************************************************** */  
   return (
     <div className="Connector">
       {isAuthenticated ? (

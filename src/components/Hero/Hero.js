@@ -23,17 +23,18 @@ export default function Hero() {
   });
 
   // ======================================================================================
-  // Functions & Hooks
+  //    Hooks
   // ======================================================================================
     
-    // Log the access and refresh tokens to the console when changed
+    // Set tokens and Log tokens to the console
     useEffect(() => {
-        console.log("Access Token changed:", accessToken);
-    }, [accessToken]);
-
-    useEffect(() => {
-        console.log("Refresh Token changed:", refreshToken);
-    }, [refreshToken]);
+        if (isAuthenticated && accessToken && refreshToken) {
+            setAccessToken(accessToken);
+            setRefreshToken(refreshToken);
+            console.log("Tokens changed:", accessToken, refreshToken);
+            console.log('Access Token is available for API calls.');
+        }
+      }, [isAuthenticated, accessToken, refreshToken]);
     
     // Log a message when the access token is available for API calls
     useEffect(() => {
@@ -52,7 +53,11 @@ export default function Hero() {
         console.log('Authentication state changed:', isAuthenticated);
       }, [isAuthenticated]);
 
-    // Functions to handle changes to the access and refresh tokens
+    
+  // ======================================================================================
+  //    Functions 
+  // ======================================================================================
+    
     const handleAuthChange = (authStatus) => {
         setIsAuthenticated(authStatus);
     }

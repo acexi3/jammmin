@@ -119,46 +119,49 @@ app.get('/api/callback', async (req, res) => {
       httpOnly: true, 
       secure: process.env.NODE_ENV === 'production', 
       maxAge: expires_in * 1000,
-      sameSite: 'lax' 
+      sameSite: 'strict' 
     });
     res.cookie('spotify_refresh_token', refresh_token, { 
       httpOnly: true, 
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax' 
+      sameSite: 'strict' 
     });
 
-    console.log('Cookies set, sending success response to frontend...');
+    console.log('Cookies set, sending success response...');
     res.json({ success: true, message: 'Logged in successfully' }); 
+  
   } catch (error) { 
     console.error('Error in /api/callback:', error);
-    if (error.response && error.response.data.error === 'invalid_grant') {
-      // If the code has already been used, just return success to the frontend
-      // This prevents errors on page refreshes when the user is already logged in
-      res.json({ success: true, message: 'Already Logged In' });
+  
+    if (error.body && error.body.error === 'invalid_grant') {
+      // If the code has already been used, check if the user is already authenticated
+      const accessToken = req.cookies['spotify_access_token'];
+      const refreshToken = req.cookies['spotify_refresh_token']; 
+      if (accessToken && refreshToken) {
+        res.json({ success: true, message: 'Already Logged In' });
+      } else {
+        res.status(401).json({ error: 'Authentication failed', details: 'Please try logging in again' });
+      }
     } else {
-      res.status(500).json({ 
-        error: 'Internal Server Error', 
-        details: error.message,
-        body: error.body // Error body provides more details  
-      }); 
+      res.status(500).json({ error: 'Internal Server Error', details: error.message }); 
     }
   }
 });
 
-// Check Auth Route
+// Check Authentication Status Route
 //************************************************* */ 
 app.get('/api/check-auth', (req, res) => {
   const accessToken = req.cookies['spotify_access_token'];
   const refreshToken = req.cookies['spotify_refresh_token'];
   console.log('Checking auth status. Access token:', !!accessToken, 'Refresh token:', !!refreshToken);
-  if (accessToken) {
-    res.json({ isAuthenticated: true, accessToken, refreshToken });
-  } else {
-    res.json({ isAuthenticated: false });
-  }
+  res.json({ 
+    isAuthenticated: !!(accessToken && refreshToken),
+    accessToken: accessToken,
+    refreshToken: refreshToken
+  });
 });
 
-// Search Auth Route
+// Search Route
 //************************************************* */ 
 app.get('/api/search', async (req, res) => {
   const { q } = req.query;
