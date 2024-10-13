@@ -1,23 +1,21 @@
 .TracklistContainer {
-    position: absolute; /* Keeps the tracklist fixed */
-    top: 108%;          /* Adjust the position as needed */
-    left: 0;            /* Align it to the left (or any other position) */
-    width: 50%;         /* Adjust width as needed */
-    height: 50vh;       /* Adjust height, so the list has space to scroll */
-    overflow-y: auto;   /* Allows scrolling within the container */
-    background-color: dark; /* rgba(255, 255, 255, 0.8) Slight transparency */
-    z-index: 1000;      /* Ensure it stays above other elements */
-    border-radius: 8px; /* Optional: Adds rounded corners */
-    padding: 10px;      /* Optional: Adds padding inside */
-    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Adds shadow effect */
-
-  /* Hide scrollbar for Chrome, Safari, and newer versions of Edge */
-  scrollbar-width: none; /* For Firefox */
-  -ms-overflow-style: none; /* For Internet Explorer and Edge */
+  height: 50vh;
+  overflow-y: auto;
+  padding-right: 15px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .TracklistContainer::-webkit-scrollbar {
-  display: none; /* For Chrome, Safari, and Opera */
+  display: none;
 }
-  
-  
+
+.TrackContainer {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .TracklistContainer {
+    padding-right: 0;
+  }
+}

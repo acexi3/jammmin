@@ -152,11 +152,23 @@ app.post('/api/create-playlist', async (req, res) => {
   const { name, description, isPublic, tracks } = req.body;
 
   try {
-    const me = await spotifyApi.getMe();
-    const userId = me.body.id;
+    console.log('Creating playlist:', { name, description, isPublic, tracksCount: tracks.length });
+    
+    const accessToken = req.cookies['spotify_access_token'];
+    if (!accessToken) {
+      return res.status(401).json({ success: false, message: 'No access token found' });
+    }
+    spotifyApi.setAccessToken(accessToken);
 
-    const playlist = await spotifyApi.createPlaylist(userId, name, { public: isPublic, description });
-    await spotifyApi.addTracksToPlaylist(playlist.body.id, tracks);
+    const me = await spotifyApi.getMe().then(data => data.body);
+    console.log('User profile:', me);
+    const userId = me.id;
+
+    const playlist = await spotifyApi.createPlaylist(userId, name, { public: isPublic, description }).then(data => data.body);
+    console.log('Playlist created:', playlist);
+
+    const addTracksResult = await spotifyApi.addTracksToPlaylist(playlist.id, tracks).then(data => data.body);
+    console.log('Tracks added to playlist:', addTracksResult);
 
     res.json({ success: true, message: 'Playlist created successfully' });
   } catch (error) {

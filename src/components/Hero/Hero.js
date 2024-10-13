@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Connector from '../Connector/Connector';
 import SearchBar from '../SearchBar/SearchBar';
 import Tracklist from '../Tracklist/Tracklist';
@@ -9,217 +9,149 @@ import axios from 'axios';
 import backgroundImage from '../../images/compose_02.jpg';
 
 export default function Hero() {
-  // State definitions
-  const [accessToken, setAccessToken] = useState(null);
-  const [refreshToken, setRefreshToken] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [tracklist, setTracklist] = useState([]);
   const [selectedTracks, setSelectedTracks] = useState([]);
-  const [playlistForm, setPlaylistForm] = useState({
-    name: '',
-    description: '',
-    isPublic: true
-  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [accessToken, setAccessToken] = useState('');
+  const [playlistForm, setPlaylistForm] = useState({ name: '', description: '', isPublic: false });
+  const [tracklist, setTracklist] = useState([]);
 
-  // ======================================================================================
-  //    Hooks
-  // ======================================================================================
-    
-    // Set tokens and Log tokens to the console
-    useEffect(() => {
-        if (isAuthenticated && accessToken && refreshToken) {
-            setAccessToken(accessToken);
-            setRefreshToken(refreshToken);
-            console.log("Tokens changed:", accessToken, refreshToken);
-            console.log('Access Token is available for API calls.');
-        }
-      }, [isAuthenticated, accessToken, refreshToken]);
-    
-    // Log a message when the access token is available for API calls
-    useEffect(() => {
-        if (accessToken) {
-            console.log('Access Token is available for API calls.');
-        }
-    }, [accessToken]);
+  // Keep all your existing functions here
 
-    // Use effect to log the setIsAuthenticated function
-    useEffect(() => {
-        console.log('setIsAuthenticated in Hero:', setIsAuthenticated);
-      }, [setIsAuthenticated]);
+  const handleAuthChange = (authStatus) => {
+    setIsAuthenticated(authStatus);
+  };
 
-    // Log to track the authentication state
-    useEffect(() => {
-        console.log('Authentication state changed:', isAuthenticated);
-      }, [isAuthenticated]);
+  const handleAccessTokenChange = (token) => {
+    setAccessToken(token);
+  };
 
-    
-  // ======================================================================================
-  //    Functions 
-  // ======================================================================================
-    
-    const handleAuthChange = (authStatus) => {
-        setIsAuthenticated(authStatus);
+  const handleRefreshTokenChange = (token) => {
+    // Implement if needed
+  };
+
+  const handleSearch = (searchResults) => {
+    setTracklist(searchResults);
+  };
+
+  const handleTrackSelection = (track, isSelected) => {
+    if (isSelected) {
+      setSelectedTracks(prev => [...prev, track]);
+    } else {
+      setSelectedTracks(prev => prev.filter(t => t.id !== track.id));
+    }
+  };
+
+  const handlePlaylistFormChange = (field, value) => {
+    setPlaylistForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const createPlaylist = async () => {
+    if (!playlistForm.name) {
+      alert('Please enter a name for your playlist.');
+      return;
     }
 
-    const handleAccessTokenChange = (newToken) => {
-        console.log("Setting new access token:", newToken);
-        setAccessToken(newToken);
+    try {
+      const response = await axios.post('http://localhost:3001/api/create-playlist', {
+        name: playlistForm.name,
+        description: playlistForm.description,
+        isPublic: playlistForm.isPublic,
+        tracks: selectedTracks.map(track => track.uri)
+      }, {
+        withCredentials: true
+      });
+
+      if (response.data.success) {
+        alert('Playlist created successfully!');
+        // Reset form and selected tracks
+        setPlaylistForm({ name: '', description: '', isPublic: false });
+        setSelectedTracks([]);
+      } else {
+        alert(`Failed to create playlist: ${response.data.message}`);
+      }
+    } catch (error) {
+      console.error('Error creating playlist:', error);
+      alert(`An error occurred while creating the playlist: ${error.response?.data?.message || error.message}`);
     }
+  };
 
-    const handleRefreshTokenChange = (newToken) => {
-        console.log("Setting new refresh token:", newToken);
-        setRefreshToken(newToken);
-    }
-
-    const handleSearch = (searchResults) => {
-      setTracklist(searchResults);
-    };
-
-    // Function to handle track selection
-    const handleTrackSelection = (track, isSelected) => {
-        if (isSelected) {
-            setSelectedTracks((prevTracks) => [...prevTracks, track]);
-        } else {
-            setSelectedTracks((prevTracks) =>
-            prevTracks.filter((t) => t.id !== track.id)
-            );
-        }
-    };
-
-    // Function to handle Playlist name, description and public/private changes
-    const handlePlaylistFormChange = (field, value) => {
-        setPlaylistForm(prev => ({ ...prev, [field]: value }));
-    };
-
-    const createPlaylist = async () => {
-        try {
-          const response = await axios.post('http://localhost:3001/api/create-playlist', {
-            name: playlistForm.name,
-            description: playlistForm.description,
-            isPublic: playlistForm.isPublic,
-            tracks: selectedTracks.map(track => track.uri)
-          }, {
-            withCredentials: true
-          });
-    
-          if (response.data.success) {
-            alert('Playlist created successfully!');
-            setPlaylistForm({ name: '', description: '', isPublic: true });
-            setSelectedTracks([]);
-          } else {
-            throw new Error(response.data.error);
-          }
-        } catch (error) {
-          console.error('Error creating playlist:', error);
-          alert('Failed to create playlist. Please try again.');
-        }
-      };
- 
-  // ======================================================================================
-  // Render
-  // ====================================================================================== 
-
-    return (
-        <Container className="HeroContainer"
-            style={{ 
-                backgroundImage: `
-                linear-gradient(
-                    90deg, 
-                    rgba(2,0,36,1) 0%, 
-                    rgba(42,42,124,1) 37%, 
-                    rgba(0,212,255,1) 100%
-                ), 
-                url(${backgroundImage || ''})`,
-                backgroundBlendMode: 'overlay', // Blending effect
-                backgroundSize: 'cover', 
-                backgroundPosition: 'center',
-                height: '40vh', // Ensures it covers the viewport height
-          }}
-        >
-            <Row> {/* Row one with two columns/sections: 1. Login to Spotify 2. Create Playlist */}
-                {/* Connector - user access to Spotify account, retrieve auth token */}
-                <Col className="Authentication">
-                    <div>
-                        <h1>Looking for Music?</h1>
-                        <h5><p>Create your Spotify playlists with ease, here.</p></h5>
-                        <br/>
-                        <Connector 
-                            onAuthChange={handleAuthChange}
-                            isAuthenticated={isAuthenticated}
-                            setIsAuthenticated={setIsAuthenticated}
-                            isLoading={isLoading}
-                            setIsLoading={setIsLoading}
-                            onAccessTokenChange={handleAccessTokenChange}
-                            onRefreshTokenChange={handleRefreshTokenChange}
-                        />
-                    </div>
-                </Col>
-                {/* Playlist Creator - name & describe your playlist, public or private and save it */}
-                <Col className="PlaylistCreator">
-                    <div>
-                        <Form>
-                            <Form.Group className="mb-3">
-                                <Form.Label><h5>This is Your Playlist:</h5></Form.Label>
-                                <Form.Control
-                                type="text"
-                                placeholder="What will you call it?"
-                                value={playlistForm.name}
-                                onChange={(e) => handlePlaylistFormChange('name', e.target.value)}
-                                />
-                            </Form.Group>
-
-                            <Form.Group className="mb-3">
-                                <Form.Control
-                                type="text"
-                                placeholder="Playlist Description (optional)"
-                                value={playlistForm.description}
-                                onChange={(e) => handlePlaylistFormChange('description', e.target.value)}
-                                />
-                            </Form.Group>
-
-                            <Form.Check
-                                type="checkbox"
-                                label="Public"
-                                checked={playlistForm.isPublic}
-                                onChange={(e) => handlePlaylistFormChange('isPublic', e.target.checked)}
-                            />
-                            <br />
-                            <Button variant="primary" onClick={createPlaylist}>
-                                Save Playlist to My Spotify
-                            </Button>
-                        </Form>
-                        <br />
-                    </div>
-                </Col>
-            </Row>
-            {/* Row two with one column: SearchBar - to search for songs and-or artists */}
-            <Row className="mt-3">
-                <SearchBar onSearch={handleSearch} accessToken={accessToken} />
-            </Row>
-            <Row> {/* Row three with two columns/sections: 1. Search results (tracklist) 2. Tracks to add to playlist */}
-                <Col className="Tracklist">
-                    {tracklist.length > 0}
-                    <div>
-                        <Tracklist tracks={tracklist} onTrackSelect={handleTrackSelection} />
-                    </div>
-                </Col>
-                
-                <Container className="PlaylistContainer">              
-                    <div>
-                        <Playlist 
-                            isAuthenticated={isAuthenticated}
-                            setIsAuthenticated={setIsAuthenticated}
-                            isLoading={isLoading}
-                            setIsLoading={setIsLoading}
-                            selectedTracks={selectedTracks}
-                            playlistForm={playlistForm}
-                            onPlaylistFormChange={handlePlaylistFormChange}
-                            createPlaylist={createPlaylist}
-                        />
-                    </div>
-                </Container>  
-            </Row>
+  return (
+    <Container fluid className="HeroContainer p-0">
+      <div className="hero-background" style={{ 
+        backgroundImage: `linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(42,42,124,1) 37%, rgba(0,212,255,1) 100%), url(${backgroundImage || ''})`,
+        backgroundBlendMode: 'overlay',
+        backgroundSize: 'cover', 
+        backgroundPosition: 'center',
+      }}>
+        <Container>
+          <Row className="py-5">
+            <Col md={6} className="mb-4 mb-md-0">
+              <h1>Looking for Music?</h1>
+              <h5><p>Create your Spotify playlists with ease, here.</p></h5>
+              <Connector 
+                onAuthChange={handleAuthChange}
+                isAuthenticated={isAuthenticated}
+                setIsAuthenticated={setIsAuthenticated}
+                isLoading={isLoading}
+                setIsLoading={setIsLoading}
+                onAccessTokenChange={handleAccessTokenChange}
+                onRefreshTokenChange={handleRefreshTokenChange}
+              />
+            </Col>
+            <Col md={6}>
+              <Form>
+                <h5>This is Your Playlist:</h5>
+                <Form.Group className="mb-3">
+                  <Form.Control
+                    type="text"
+                    placeholder="What will you call it?"
+                    value={playlistForm.name}
+                    onChange={(e) => handlePlaylistFormChange('name', e.target.value)}
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Control
+                    type="text"
+                    placeholder="Playlist Description (optional)"
+                    value={playlistForm.description}
+                    onChange={(e) => handlePlaylistFormChange('description', e.target.value)}
+                  />
+                </Form.Group>
+                <Form.Check
+                  type="checkbox"
+                  label="Public"
+                  checked={playlistForm.isPublic}
+                  onChange={(e) => handlePlaylistFormChange('isPublic', e.target.checked)}
+                />
+                <Button variant="primary" onClick={createPlaylist} className="mt-3">
+                  Save Playlist to My Spotify
+                </Button>
+              </Form>
+            </Col>
+          </Row>
         </Container>
-    );
+      </div>
+      <Container className="mt-4">
+        <Row>
+          <Col>
+            <SearchBar onSearch={handleSearch} accessToken={accessToken} />
+          </Col>
+        </Row>
+        <Row className="mt-4">
+          <Col md={6} className="mb-4 mb-md-0">
+            <Tracklist tracks={tracklist} onTrackSelect={handleTrackSelection} />
+          </Col>
+          <Col md={6}>
+            <Playlist 
+              selectedTracks={selectedTracks}
+              playlistForm={playlistForm}
+              onPlaylistFormChange={handlePlaylistFormChange}
+              createPlaylist={createPlaylist}
+            />
+          </Col>
+        </Row>
+      </Container>
+    </Container>
+  );
 }

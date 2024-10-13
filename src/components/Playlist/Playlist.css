@@ -1,38 +1,54 @@
-.SonglistContainer {
-    width: 100%;
-    padding: 5px;
-    height: 50vh;
-  }
+.PlaylistContainer {
+  height: 50vh;
+  display: flex;
+  flex-direction: column;
+}
 
 .PlaylistHeader {
-    /* Style for the header */
-    font-size: 1rem;
-    margin-bottom: 5px;
-  }
-  
+  margin-bottom: 1rem;
+  color: white;
+}
+
 .PlaylistSongs {
-    height: 50vh; /* Adjust height as needed */
-    overflow-y: auto; /* Allows scrolling for the tracklist */
-    /* border-top: 1px solid #ccc; /* Optional: Add a divider between header and list */
-    padding-top: 5px;
+  flex-grow: 1;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-left: 15px;
+}
+
+.PlaylistSongs::-webkit-scrollbar {
+  display: none;
+}
+
+.PlaylistSongs .card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.PlaylistSongs .card-title {
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.PlaylistSongs .card-text {
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .PlaylistSongs {
+    padding-left: 0;
   }
 
-/* For Chrome, Safari, and Opera */
-.PlaylistSongs::-webkit-scrollbar {
-    width: 8px; /* Set the width of the scrollbar */
+  .PlaylistSongs .card-img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .PlaylistSongs .card-title {
+    font-size: 0.9rem;
+  }
+
+  .PlaylistSongs .card-text {
+    font-size: 0.8rem;
+  }
 }
-  
-.PlaylistSongs::-webkit-scrollbar-track {
-    background: transparent; /* Transparent scrollbar track */
- }
-  
-.PlaylistSongs::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2); /* Slightly transparent scrollbar thumb */
-    border-radius: 10px; /* Rounded scrollbar thumb */
- }
-  
-  /* For Firefox */
-.PlaylistSongs {
-    scrollbar-width: thin; /* Sets a thinner scrollbar */
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent; /* Transparent scrollbar thumb */
- }
