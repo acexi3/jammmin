@@ -56,6 +56,7 @@ app.get('/api/login', (req, res) => {
   res.redirect(redirectUrl);
 });
 
+// Route: Callback  
 app.get('/api/callback', async (req, res) => {
   const { code } = req.query;
   
@@ -91,6 +92,7 @@ app.get('/api/callback', async (req, res) => {
   }
 });
 
+// Route: Check Authentication
 app.get('/api/check-auth', (req, res) => {
   const accessToken = req.cookies['spotify_access_token'];
   const refreshToken = req.cookies['spotify_refresh_token'];
@@ -103,6 +105,7 @@ app.post('/api/logout', (req, res) => {
   res.json({ success: true, message: 'Logged out successfully' });
 });
 
+// Function: Refresh Access Token
 const refreshAccessToken = async (req, res, next) => {
   const accessToken = req.cookies['spotify_access_token'];
   const refreshToken = req.cookies['spotify_refresh_token'];
@@ -137,6 +140,7 @@ const refreshAccessToken = async (req, res, next) => {
 
 app.use('/api', refreshAccessToken);
 
+// Route: Search
 app.get('/api/search', async (req, res) => {
   const { q } = req.query;
   try {
@@ -148,6 +152,7 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
+// Route: Create Playlist
 app.post('/api/create-playlist', async (req, res) => {
   const { name, description, isPublic, tracks } = req.body;
 
@@ -160,21 +165,36 @@ app.post('/api/create-playlist', async (req, res) => {
     }
     spotifyApi.setAccessToken(accessToken);
 
-    const me = await spotifyApi.getMe().then(data => data.body);
-    console.log('User profile:', me);
-    const userId = me.id;
+    console.log('Spotify API instance:', spotifyApi);
+    console.log('Access token:', accessToken);
 
-    const playlist = await spotifyApi.createPlaylist(userId, name, { public: isPublic, description }).then(data => data.body);
-    console.log('Playlist created:', playlist);
+    console.log('Creating playlist...');
+    const playlist = await spotifyApi.createPlaylist(name, { 'public': isPublic, 'description': description });
+    console.log('Playlist created:', playlist.body);
 
-    const addTracksResult = await spotifyApi.addTracksToPlaylist(playlist.id, tracks).then(data => data.body);
-    console.log('Tracks added to playlist:', addTracksResult);
+    console.log('Adding tracks to playlist...');
+    const addTracksResult = await spotifyApi.addTracksToPlaylist(playlist.body.id, tracks);
+    console.log('Tracks added to playlist:', addTracksResult.body);
 
     res.json({ success: true, message: 'Playlist created successfully' });
   } catch (error) {
-    console.error('Error creating playlist:', error);
+    console.error('Error in create playlist route:', error);
     res.status(500).json({ success: false, message: 'Failed to create playlist', error: error.message });
   }
+});
+
+// Global error handler
+app.use((err, _req, res, _next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({ success: false, message: 'An unexpected error occurred', error: err.message });
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
 const PORT = process.env.PORT || 3001;

@@ -46,12 +46,12 @@ export default function Hero() {
     setPlaylistForm(prev => ({ ...prev, [field]: value }));
   };
 
+  // Function: Create Playlist
   const createPlaylist = async () => {
     if (!playlistForm.name) {
       alert('Please enter a name for your playlist.');
       return;
     }
-
     try {
       const response = await axios.post('http://localhost:3001/api/create-playlist', {
         name: playlistForm.name,
@@ -59,11 +59,11 @@ export default function Hero() {
         isPublic: playlistForm.isPublic,
         tracks: selectedTracks.map(track => track.uri)
       }, {
-        withCredentials: true
+        withCredentials: true,
+        timeout: 30000 // 30 second timeout
       });
-
       if (response.data.success) {
-        alert('Playlist created successfully!');
+        alert('Playlist created successfully! Log into your Spotify App to listen. Note: it may take a few minutes to load on your account.');
         // Reset form and selected tracks
         setPlaylistForm({ name: '', description: '', isPublic: false });
         setSelectedTracks([]);
@@ -72,7 +72,11 @@ export default function Hero() {
       }
     } catch (error) {
       console.error('Error creating playlist:', error);
-      alert(`An error occurred while creating the playlist: ${error.response?.data?.message || error.message}`);
+      if (error.code === 'ECONNABORTED') {  
+        alert('The request to create your playlist timed out. Please try again.');
+      } else {
+        alert(`An error occurred while creating the playlist: ${error.response?.data?.message || error.message}`);
+      }
     }
   };
 
