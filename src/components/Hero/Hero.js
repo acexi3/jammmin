@@ -32,7 +32,12 @@ export default function Hero() {
 
   const handleSearch = (searchResults) => {
     setTracklist(searchResults);
-  };
+    // Reset scroll position of TracklistContainer
+    const tracklistContainer = document.querySelector('.TracklistContainer');
+    if (tracklistContainer) {
+      tracklistContainer.scrollTop = 0; 
+    }
+  }; 
 
   const handleTrackSelection = (track, isSelected) => {
     if (isSelected) {
@@ -64,9 +69,10 @@ export default function Hero() {
       });
       if (response.data.success) {
         alert('Playlist created successfully! Log into your Spotify App to listen. Note: it may take a few minutes to load on your account.');
-        // Reset form and selected tracks
+        // Reset form, selected tracks and tracklist
         setPlaylistForm({ name: '', description: '', isPublic: false });
         setSelectedTracks([]);
+        setTracklist([]);
       } else {
         alert(`Failed to create playlist: ${response.data.message}`);
       }
@@ -80,7 +86,11 @@ export default function Hero() {
     }
   };
 
-  return (
+/**************************************************************** */
+// Render
+/************************************************************** */
+
+return (
     <Container fluid className="HeroContainer p-0">
       <div className="hero-background" style={{ 
         backgroundImage: `linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(42,42,124,1) 37%, rgba(0,212,255,1) 100%), url(${backgroundImage || ''})`,

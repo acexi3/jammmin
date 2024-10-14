@@ -41,27 +41,26 @@ export default function Tracklist({ tracks, onTrackSelect }) {
               <Card.Img 
                 src={track.albumArt} 
                 alt={`${track.name} album art`}
-                style={{ width: '80px', height: '80px', objectFit: 'cover', padding: '2px' }} 
+                style={{ width: '110px', height: '110px', objectFit: 'cover', padding: '2px' }} 
               />
             </Col>
             <Col xs={8}>  
               <Card.Body>
                 <Card.Title>{track.name}</Card.Title>
-                <Card.Text>{track.artist}</Card.Text>
-                <Card.Text>{track.album}</Card.Text>
+                <Card.Text>{track.artist} - {track.album}</Card.Text> 
                 <div className="d-flex justify-content-between align-items-center">
-                  <Form.Check
-                    type="checkbox"
-                    label="Select"
-                    onChange={(e) => handleSelect(track, e)}
-                  />
                   <Button 
                     variant="outline-light"
                     size="sm"
                     onClick={() => handlePlay(track.previewUrl)}
                     disabled={!track.previewUrl}>
-                      {track.previewUrl ? 'Play' : 'No Preview'}
+                      {track.previewUrl ? 'Play me' : 'No Preview'}
                   </Button>
+                  <Form.Check
+                    type="checkbox"
+                    label="Pick me!"
+                    onChange={(e) => handleSelect(track, e)}
+                  />
                 </div>
               </Card.Body>
             </Col>

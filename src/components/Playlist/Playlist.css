@@ -2,6 +2,7 @@
   height: 50vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden; /* Prevents horizontal scrolling */
 }
 
 .PlaylistHeader {
@@ -12,9 +13,10 @@
 .PlaylistSongs {
   flex-grow: 1;
   overflow-y: auto;
+  overflow-x: hidden; /* Prevents horizontal scrolling */
   scrollbar-width: none;
   -ms-overflow-style: none;
-  padding-left: 15px;
+  padding-right: 15px; /* Add padding to the right to prevent horizontal scrolling */
 }
 
 .PlaylistSongs::-webkit-scrollbar {
@@ -22,7 +24,12 @@
 }
 
 .PlaylistSongs .card {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.PlaylistSongs .card:hover { 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
 }
 
 .PlaylistSongs .card-title {

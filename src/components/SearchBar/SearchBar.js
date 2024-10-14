@@ -22,6 +22,7 @@ export default function SearchBar({ onSearch }) {
           uri: track.uri
         }));
         onSearch(processedTracks);
+        setSearchInput(''); 
       } else {
         console.error("No data found in response or unexpected data structure:", response.data);
         onSearch([]);
@@ -43,6 +44,7 @@ export default function SearchBar({ onSearch }) {
                 <FormControl
                     id="search-input"
                     type="input"
+                    value={searchInput} 
                     onKeyDown={(event) => { 
                         if (event.key === "Enter") { 
                             event.target.value = "";

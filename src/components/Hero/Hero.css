@@ -5,7 +5,9 @@
   .hero-background {
     padding: 40px 0;
     color: white;
-  }
+    background-attachment: fixed;
+    background-position: top center; 
+  } 
   
   h1 {
     margin-bottom: 20px;

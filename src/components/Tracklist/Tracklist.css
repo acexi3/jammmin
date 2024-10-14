@@ -11,7 +11,26 @@
 }
 
 .TrackContainer {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.3s ease-in-out; 
+}
+
+.TrackContainer:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+} 
+
+.TrackContainer .card-img {
+  width: 60px;
+  height: 60px;
+}
+
+.TrackContainer .card-title {
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;  
+}
+
+.TrackContainer .card-text {
+  font-size: 0.8rem; 
 }
 
 @media (max-width: 768px) {
