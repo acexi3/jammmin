@@ -1,12 +1,14 @@
-.HeroContainer {
-    min-height: 100vh;
+.Hero {
+    width: 100%;
+    padding: 1% 1%;
+    color: white;
+    border-radius: 8px; 
   }
   
   .hero-background {
-    padding: 40px 0;
-    color: white;
     background-attachment: fixed;
-    background-position: top center; 
+    background-position: top center;
+    padding: 2px 20px;
   } 
   
   h1 {
@@ -22,8 +24,51 @@
     margin-bottom: 10px;
   }
   
+  button.custom-button {
+    background-color: #000;
+    color: #fff;
+    border-color: #1DB954; /* Spotify green */
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+
+  button.custom-button:hover {
+    background-color: rgba(5, 159, 5, 0.5); /* Darker Spotify green */
+    border-color: red;
+    color: white;
+  }
+  
+  button.custom-button:active {
+    background-color: #1aa34a !important; /* Darker shade for active state */
+    border-color: #e60000 !important;
+  }
+  
+  button.custom-button:focus {
+    box-shadow: 0 0 0 0.2rem rgba(5, 159, 5, 0.5); /* Custom focus shadow */
+  }
+
+  .custom-button.reset {
+    background-color: #000; 
+    border-color: #ff4136; /* Red for reset button */
+  }
+  
+  .custom-button.reset:hover {
+    background-color: rgba(155, 5, 5, 0.6);
+    border-color: #1ed760; /* Lighter Spotify green */
+  }
+  
+  .custom-button.reset:active {
+    background-color: DarkRed !important;
+    border-color: #e60000 !important;
+  }
+  
+  .custom-button.reset:focus {
+    box-shadow: 0 0 0 0.2rem rgba(155, 5, 5, 0.8);
+  }
   @media (max-width: 768px) {
     .hero-background {
-      padding: 20px 0;
+      padding: 10px 0;
     }
   }

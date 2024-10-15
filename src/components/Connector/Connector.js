@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import axios from 'axios';
 import { Button } from 'react-bootstrap';
 import './Connector.css';
+import '../Hero/Hero.css';
 
 export default function Connector({ 
   onAuthChange, 
@@ -70,10 +71,10 @@ export default function Connector({
       {isAuthenticated ? (
         <div>
           <p>You are Connected to Your Spotify</p>
-          <Button onClick={handleLogout}>Disconnect</Button>
+          <Button className="custom-button" onClick={handleLogout}>Disconnect</Button>
         </div>
       ) : (
-        <Button onClick={handleLogin}>Connect Me to My Spotify</Button>
+        <Button  className="custom-button" onClick={handleLogin}>Connect Me to My Spotify</Button>
       )}
     </div>
   );

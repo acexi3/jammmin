@@ -1,5 +1,5 @@
 .PlaylistContainer {
-  height: 50vh;
+  max-height: 55vh;
   display: flex;
   flex-direction: column;
   overflow-x: hidden; /* Prevents horizontal scrolling */

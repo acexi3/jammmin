@@ -1,7 +1,6 @@
 .TracklistContainer {
-  height: 50vh;
+  max-height: 55vh;
   overflow-y: auto;
-  padding-right: 15px;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -31,6 +30,12 @@
 
 .TrackContainer .card-text {
   font-size: 0.8rem; 
+}
+
+.track-item img {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
 }
 
 @media (max-width: 768px) {

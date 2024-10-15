@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Form, Button } from 'react-bootstrap';
+import { Card, Col, Form, Button } from 'react-bootstrap';
 import './Tracklist.css';
 
 export default function Tracklist({ tracks, onTrackSelect }) {
@@ -33,38 +33,35 @@ export default function Tracklist({ tracks, onTrackSelect }) {
   return (
     <div className="TracklistContainer">
       {tracks.map((track) => (
-        <Card 
-          className='bg-dark text-white mb-2' 
-          key={track.id}>
-          <Row className="TrackContainer align-items-center">
-            <Col xs={4} className="d-flex justify-content-center">  
-              <Card.Img 
+        <Card key={track.id} className="TrackContainer bg-dark text-white mb-2">
+          <Card.Body className="d-flex align-items-center justify-content-center">  
+            <Col className="ImageContainer">
+              <Card.Img
                 src={track.albumArt} 
                 alt={`${track.name} album art`}
                 style={{ width: '110px', height: '110px', objectFit: 'cover', padding: '2px' }} 
               />
+            </Col>  
+            <Col className="TrackDetailContainer d-flex flex-column">  
+              <Card.Title>{track.name}</Card.Title>
+              <Card.Text>{track.artist} - {track.album}</Card.Text> 
+              <Button 
+                variant="outline-light"
+                size="sm"
+                onClick={() => handlePlay(track.previewUrl)}                  
+                disabled={!track.previewUrl}
+                className="mb-2">
+                {track.previewUrl ? 'Play me' : 'No Preview'}
+              </Button>
             </Col>
-            <Col xs={8}>  
-              <Card.Body>
-                <Card.Title>{track.name}</Card.Title>
-                <Card.Text>{track.artist} - {track.album}</Card.Text> 
-                <div className="d-flex justify-content-between align-items-center">
-                  <Button 
-                    variant="outline-light"
-                    size="sm"
-                    onClick={() => handlePlay(track.previewUrl)}
-                    disabled={!track.previewUrl}>
-                      {track.previewUrl ? 'Play me' : 'No Preview'}
-                  </Button>
-                  <Form.Check
-                    type="checkbox"
-                    label="Pick me!"
-                    onChange={(e) => handleSelect(track, e)}
-                  />
-                </div>
-              </Card.Body>
+            <Col className="SelectSongContainer d-flex justify-content-center">
+              <Form.Check                
+                type="checkbox"
+                label="Pick me!"
+                onChange={(e) => handleSelect(track, e)}                
+              />  
             </Col>
-          </Row>
+          </Card.Body>
         </Card>
       ))}
     </div>

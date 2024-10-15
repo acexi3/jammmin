@@ -1,24 +1,25 @@
 .App {
   display: flex;
   flex-direction: column;
-  height: 100vh; /* Ensures the background covers the entire viewport */
-  overflow: hidden;
-  background: rgb(2,0,36);
+  height: 100vh;
+  /* background: rgb(2,0,36); */
   background: linear-gradient(
     90deg, 
     rgba(2,0,36,1) 0%, 
-    rgba(42,42,124,1) 37%, 
+    rgba(42,42,124,1) 36%, 
     rgba(0,212,255,1) 100%
   );
   background-attachment: fixed; /* Background scrolls with the page */
   padding: 1% 5%;
-  color: white;
+  /* color: white; */
+  overflow-y: auto;
 }
 
 body, html {
   margin: 0;
   padding: 0;
   height: 100%;
+  overflow-x: hidden;
 }
 
 .App-header {
@@ -53,12 +54,18 @@ p {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  overflow: hidden;
 }
 
 .scrollable-content {
   display: flex;
   flex-grow: 1;
-  overflow-y: hidden;
+  overflow-y: auto;
+}
+
+/* Add responsive styles */
+@media (max-width: 768px) {
+  .App {
+    padding: 1% 2%; /* Reduce padding on smaller screens */
+  }
 }
 

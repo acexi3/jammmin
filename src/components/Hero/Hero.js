@@ -13,10 +13,10 @@ export default function Hero() {
   const [selectedTracks, setSelectedTracks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [accessToken, setAccessToken] = useState('');
-  const [playlistForm, setPlaylistForm] = useState({ name: '', description: '', isPublic: false });
+  const [playlistForm, setPlaylistForm] = useState({ name: '', description: '', isPublic: true });
   const [tracklist, setTracklist] = useState([]);
 
-  // Keep all your existing functions here
+  // Functions
 
   const handleAuthChange = (authStatus) => {
     setIsAuthenticated(authStatus);
@@ -49,6 +49,12 @@ export default function Hero() {
 
   const handlePlaylistFormChange = (field, value) => {
     setPlaylistForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleReset = () => {
+    setPlaylistForm({ name: '', description: '', isPublic: true });
+    setSelectedTracks([]);
+    setTracklist([]);
   };
 
   // Function: Create Playlist
@@ -91,15 +97,16 @@ export default function Hero() {
 /************************************************************** */
 
 return (
-    <Container fluid className="HeroContainer p-0">
+    <Container fluid className="Hero p-0">
       <div className="hero-background" style={{ 
         backgroundImage: `linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(42,42,124,1) 37%, rgba(0,212,255,1) 100%), url(${backgroundImage || ''})`,
         backgroundBlendMode: 'overlay',
         backgroundSize: 'cover', 
         backgroundPosition: 'center',
       }}>
-        <Container>
-          <Row className="py-5">
+        <Container className="hero-EngineContainer pt-0">
+          {/* Hero Engine - Contains Spotify Login, Playlist Creation Form & Search Bar */}
+          <Row className="py-2">
             <Col md={6} className="mb-4 mb-md-0">
               <h1>Looking for Music?</h1>
               <h5><p>Create your Spotify playlists with ease, here.</p></h5>
@@ -138,21 +145,25 @@ return (
                   checked={playlistForm.isPublic}
                   onChange={(e) => handlePlaylistFormChange('isPublic', e.target.checked)}
                 />
-                <Button variant="primary" onClick={createPlaylist} className="mt-3">
-                  Save Playlist to My Spotify
-                </Button>
+                <div className="custom-button d-flex justify-content-between">
+                    <Button className="custom-button mt-4" onClick={createPlaylist}>
+                    Save Playlist to My Spotify
+                    </Button>
+                    <Button className="custom-button reset mt-4" onClick={handleReset}>
+                    Reset
+                    </Button>
+                </div>
               </Form>
             </Col>
           </Row>
+          <Row>
+            <SearchBar onSearch={handleSearch} accessToken={accessToken} />
+          </Row> 
         </Container>
       </div>
       <Container className="mt-4">
-        <Row>
-          <Col>
-            <SearchBar onSearch={handleSearch} accessToken={accessToken} />
-          </Col>
-        </Row>
-        <Row className="mt-4">
+        
+        <Row className="mt-4 scrollable-content">
           <Col md={6} className="mb-4 mb-md-0">
             <Tracklist tracks={tracklist} onTrackSelect={handleTrackSelection} />
           </Col>
