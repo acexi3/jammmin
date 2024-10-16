@@ -5,9 +5,11 @@ import axios from 'axios';
 export default function SearchBar({ onSearch }) {
   const [searchInput, setSearchInput] = useState('');
 
+  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+
   const search = async () => {
     try {
-      const response = await axios.get(`http://localhost:3001/api/search?q=${encodeURIComponent(searchInput)}`, {
+      const response = await axios.get(`${apiBaseUrl}/search?q=${encodeURIComponent(searchInput)}`, {
         withCredentials: true
       });
       

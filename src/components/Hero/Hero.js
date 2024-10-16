@@ -16,6 +16,8 @@ export default function Hero() {
   const [playlistForm, setPlaylistForm] = useState({ name: '', description: '', isPublic: true });
   const [tracklist, setTracklist] = useState([]);
 
+  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+  
   // Functions
 
   const handleAuthChange = (authStatus) => {
@@ -64,7 +66,7 @@ export default function Hero() {
       return;
     }
     try {
-      const response = await axios.post('http://localhost:3001/api/create-playlist', {
+      const response = await axios.post(`${apiBaseUrl}/create-playlist`, {
         name: playlistForm.name,
         description: playlistForm.description,
         isPublic: playlistForm.isPublic,

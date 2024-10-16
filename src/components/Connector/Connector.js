@@ -11,61 +11,62 @@ export default function Connector({
   isLoading,
   setIsLoading,
 }) {
-    useEffect(() => {
-      const checkAuthStatus = async () => {
+
+  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL; 
+
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const response = await axios.get(`${apiBaseUrl}/check-auth`, { withCredentials: true });
+        console.log('Auth status response:', response.data);
+        setIsAuthenticated(response.data.isAuthenticated);
+        onAuthChange(response.data.isAuthenticated);
+      } catch (error) {
+        console.error('Error checking auth status:', error);
+      } finally {
+        setIsLoading(false);
+      }      
+    };
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    if (code) {
+      console.log('Authorization code found:', code);
+        // Exchange the code for tokens
+      const exchangeCode = async () => {
         try {
-          const response = await axios.get('http://localhost:3001/api/check-auth', { withCredentials: true });
-          console.log('Auth status response:', response.data);
-          setIsAuthenticated(response.data.isAuthenticated);
-          onAuthChange(response.data.isAuthenticated);
+          const response = await axios.get(`${apiBaseUrl}/callback?code=${code}`, { withCredentials: true });
+          console.log('Token exchange response:', response.data);
+          checkAuthStatus();
         } catch (error) {
-          console.error('Error checking auth status:', error);
-        } finally {
-          setIsLoading(false);
+          console.error('Error exchanging code for tokens:', error);
         }
       };
+      exchangeCode();
+      // Clear the code from the URL
+      window.history.replaceState({}, document.title, "/");
+    } else {
+      checkAuthStatus();
+    }
+  }, [onAuthChange, setIsAuthenticated, setIsLoading, apiBaseUrl]);
 
-      const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code');
-
-      if (code) {
-        console.log('Authorization code found:', code);
-        // Exchange the code for tokens
-        const exchangeCode = async () => {
-          try {
-            const response = await axios.get(`http://localhost:3001/api/callback?code=${code}`, { withCredentials: true });
-            console.log('Token exchange response:', response.data);
-            checkAuthStatus();
-          } catch (error) {
-            console.error('Error exchanging code for tokens:', error);
-          }
-        };
-        exchangeCode();
-        // Clear the code from the URL
-        window.history.replaceState({}, document.title, "/");
-      } else {
-        checkAuthStatus();
-      }
-    }, [onAuthChange, setIsAuthenticated, setIsLoading]);
-
+  // Function: Handle Login, call to backend to redirect to Spotify login
   const handleLogin = () => {
-    window.location.href = 'http://localhost:3001/api/login';
+    window.location.href = `${apiBaseUrl}/login`;
   };
 
+  // Function: Handle Logout, call to backend to clear cookies
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:3001/api/logout', {}, { withCredentials: true });
+      await axios.post(`${apiBaseUrl}/logout`, {}, { withCredentials: true });
       setIsAuthenticated(false);
       onAuthChange(false);
     } catch (error) {
       console.error('Error logging out:', error);
     }
   };
-
   if (isLoading) {
     return <p>Loading...</p>;
   }
-
   return (
     <div className="Connector">
       {isAuthenticated ? (
