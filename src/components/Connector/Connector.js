@@ -33,24 +33,16 @@ export default function Connector({
 
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
+    const error = urlParams.get('error');
     
-    if (code) {
-      console.log('Authorization code found:', code);
-      const exchangeCode = async () => {
-        try {
-          const response = await axios.get(`${apiBaseUrl}/callback?code=${code}`, { withCredentials: true });
-          console.log('Token exchange response:', response.data);
-          // After successful token exchange, clear the URL parameters
-          window.history.replaceState({}, document.title, window.location.pathname);
-          // Check auth status after token exchange
-          await checkAuthStatus();
-        } catch (error) {
-          console.error('Error exchanging code for tokens:', error);
-          setIsAuthenticated(false);
-          setIsLoading(false);
-        }
-      };
-      exchangeCode();
+    if (error) {
+      console.error('Auth error:', error);
+      setIsAuthenticated(false);
+      setIsLoading(false);
+    } else if (code) {
+      // Just clear the URL and check auth status
+      window.history.replaceState({}, document.title, window.location.pathname);
+      checkAuthStatus();
     } else {
       checkAuthStatus();
     }

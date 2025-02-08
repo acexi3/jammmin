@@ -44,12 +44,12 @@ exports.handler = async (event, context) => {
     const refreshTokenCookie = `spotify_refresh_token=${refresh_token}; Path=/; HttpOnly; Secure; SameSite=Lax`;
 
     return {
-      statusCode: 302,  // Changed to redirect
+      statusCode: 302,  // Redirect
       headers: {
         'Set-Cookie': accessTokenCookie + ', ' + refreshTokenCookie,
         'Access-Control-Allow-Credentials': 'true',
         'Access-Control-Allow-Origin': 'https://findyournextjam.netlify.app',
-        'Location': 'https://findyournextjam.netlify.app'  // Redirect to main app
+        'Location': 'https://findyournextjam.netlify.app'
       }
     };
   } catch (error) {
