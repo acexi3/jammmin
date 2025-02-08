@@ -14,6 +14,11 @@ function generateRandomString(length) {
 }
 
 exports.handler = async (event, context) => {
+  // Add debugging
+  console.log('Environment variables check:');
+  console.log('CLIENT_ID:', CLIENT_ID);
+  console.log('REDIRECT_URI:', REDIRECT_URI);
+
   const state = generateRandomString(16);
   const scope = 'user-read-private user-read-email playlist-modify-public playlist-modify-private';
   const redirectUrl = 'https://accounts.spotify.com/authorize?' +

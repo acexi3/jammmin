@@ -159,7 +159,11 @@ return (
             </Col>
           </Row>
           <Row>
-            <SearchBar onSearch={handleSearch} accessToken={accessToken} />
+            <SearchBar 
+              onSearch={handleSearch} 
+              accessToken={accessToken}
+              isAuthenticated={isAuthenticated}
+            />
           </Row> 
         </Container>
       </div>

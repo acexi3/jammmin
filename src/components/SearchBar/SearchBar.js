@@ -1,13 +1,22 @@
 import React, { useState } from 'react';
-import { Container, InputGroup, FormControl, Button } from 'react-bootstrap';
+import { Container, InputGroup, FormControl, Button, Alert } from 'react-bootstrap';
 import axios from 'axios';
 
-export default function SearchBar({ onSearch }) {
+export default function SearchBar({ onSearch, isAuthenticated }) {
   const [searchInput, setSearchInput] = useState('');
+  const [showError, setShowError] = useState(false);
 
   const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 
   const search = async () => {
+    setShowError(false);
+
+    if (!isAuthenticated) {
+      setShowError(true);
+      onSearch([]);
+      return;
+    }
+
     try {
       const response = await axios.get(`${apiBaseUrl}/search?q=${encodeURIComponent(searchInput)}`, {
         withCredentials: true
@@ -42,6 +51,11 @@ export default function SearchBar({ onSearch }) {
     return (
         <div className="SearchBar">
           <Container>
+            {showError && (
+              <Alert variant="warning" onClose={() => setShowError(false)} dismissible>
+                Please connect to Spotify before searching for tracks.
+              </Alert>
+            )}
             <InputGroup className="mb-3" size="lg">
                 <FormControl
                     id="search-input"
