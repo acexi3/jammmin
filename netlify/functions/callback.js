@@ -19,7 +19,7 @@ exports.handler = async (event, context) => {
   if (!code) {
     console.log('No code provided');
     return {
-      statusCode: 302,  // Changed to redirect
+      statusCode: 302,
       headers: {
         'Location': 'https://findyournextjam.netlify.app?error=no_code'
       }
@@ -39,23 +39,40 @@ exports.handler = async (event, context) => {
     
     const { access_token, refresh_token, expires_in } = data.body;
 
-    // Create cookie strings with Max-Age
-    const accessTokenCookie = `spotify_access_token=${access_token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${expires_in}`;
-    const refreshTokenCookie = `spotify_refresh_token=${refresh_token}; Path=/; HttpOnly; Secure; SameSite=Lax`;
+    // Create cookie strings with more specific settings
+    const accessTokenCookie = `spotify_access_token=${access_token}; Path=/; Domain=findyournextjam.netlify.app; HttpOnly; Secure; SameSite=Strict; Max-Age=${expires_in}`;
+    const refreshTokenCookie = `spotify_refresh_token=${refresh_token}; Path=/; Domain=findyournextjam.netlify.app; HttpOnly; Secure; SameSite=Strict; Max-Age=31536000`;
 
+    console.log('Setting cookies with following attributes:', {
+      accessTokenMaxAge: expires_in,
+      refreshTokenMaxAge: 31536000,
+      domain: 'findyournextjam.netlify.app',
+      path: '/',
+      secure: true,
+      sameSite: 'Strict',
+      httpOnly: true
+    });
+
+    // Set cookies as separate headers
     return {
-      statusCode: 302,  // Redirect
+      statusCode: 302,
+      multiValueHeaders: {
+        'Set-Cookie': [
+          accessTokenCookie,
+          refreshTokenCookie
+        ],
+        'Cache-Control': ['no-cache, no-store, must-revalidate'],
+        'Pragma': ['no-cache'],
+        'Expires': ['0']
+      },
       headers: {
-        'Set-Cookie': accessTokenCookie + ', ' + refreshTokenCookie,
-        'Access-Control-Allow-Credentials': 'true',
-        'Access-Control-Allow-Origin': 'https://findyournextjam.netlify.app',
         'Location': 'https://findyournextjam.netlify.app'
       }
     };
   } catch (error) {
     console.error('Error in callback:', error);
     return {
-      statusCode: 302,  // Changed to redirect
+      statusCode: 302,
       headers: {
         'Location': 'https://findyournextjam.netlify.app?error=auth_failed'
       }
