@@ -12,8 +12,22 @@ const spotifyApi = new SpotifyWebApi({
 });
 
 exports.handler = async (event, context) => {
+  console.log('Search function triggered');
+  console.log('Cookies received:', event.headers.cookie);
+  
   const { q } = event.queryStringParameters;
-  const accessToken = event.headers.cookie?.match(/spotify_access_token=([^;]+)/)?.[1];
+  const cookies = event.headers.cookie?.split(';').reduce((acc, cookie) => {
+    const [key, value] = cookie.trim().split('=');
+    acc[key] = value;
+    return acc;
+  }, {});
+
+  console.log('Parsed cookies:', {
+    hasAccessToken: !!cookies?.spotify_access_token,
+    hasRefreshToken: !!cookies?.spotify_refresh_token
+  });
+
+  const accessToken = cookies?.spotify_access_token;
 
   if (!accessToken) {
     return {
@@ -34,7 +48,10 @@ exports.handler = async (event, context) => {
     console.error('Error in search:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Internal Server Error' })
+      body: JSON.stringify({ 
+        error: 'Internal Server Error',
+        details: error.message 
+      })
     };
   }
 };

@@ -15,7 +15,9 @@ export default function Connector({
   const apiBaseUrl = process.env.REACT_APP_API_BASE_URL; 
 
   useEffect(() => {
+    console.log('Connector useEffect triggered');
     const checkAuthStatus = async () => {
+      console.log('Checking auth status...');
       try {
         const response = await axios.get(`${apiBaseUrl}/check-auth`, { withCredentials: true });
         console.log('Auth status response:', response.data);
@@ -23,27 +25,32 @@ export default function Connector({
         onAuthChange(response.data.isAuthenticated);
       } catch (error) {
         console.error('Error checking auth status:', error);
+        setIsAuthenticated(false);
       } finally {
         setIsLoading(false);
       }      
     };
+
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
+    
     if (code) {
       console.log('Authorization code found:', code);
-        // Exchange the code for tokens
       const exchangeCode = async () => {
         try {
           const response = await axios.get(`${apiBaseUrl}/callback?code=${code}`, { withCredentials: true });
           console.log('Token exchange response:', response.data);
-          checkAuthStatus();
+          // After successful token exchange, clear the URL parameters
+          window.history.replaceState({}, document.title, window.location.pathname);
+          // Check auth status after token exchange
+          await checkAuthStatus();
         } catch (error) {
           console.error('Error exchanging code for tokens:', error);
+          setIsAuthenticated(false);
+          setIsLoading(false);
         }
       };
       exchangeCode();
-      // Clear the code from the URL
-      window.history.replaceState({}, document.title, "/");
     } else {
       checkAuthStatus();
     }
