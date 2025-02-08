@@ -51,6 +51,7 @@ export default function Connector({
 
   // Function: Handle Login, call to backend to redirect to Spotify login
   const handleLogin = () => {
+    console.log('Login URL:', `${apiBaseUrl}/login`);
     window.location.href = `${apiBaseUrl}/login`;
   };
 
