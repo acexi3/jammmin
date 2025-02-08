@@ -6,7 +6,6 @@ const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 const REDIRECT_URI = process.env.REDIRECT_URI;
 
 exports.handler = async (event, context) => {
-  // Add debugging
   console.log('Callback function triggered');
   console.log('Environment variables check:', {
     hasClientId: !!CLIENT_ID,
@@ -14,11 +13,6 @@ exports.handler = async (event, context) => {
     redirectUri: REDIRECT_URI
   });
   console.log('Query parameters:', event.queryStringParameters);
-
-  // Get the origin, with fallback values
-  const origin = event.headers.origin || event.headers.Origin || 'https://findyournextjam.netlify.app';
-  console.log('Request headers:', event.headers);
-  console.log('Using origin:', origin);
 
   const { code } = event.queryStringParameters;
 
@@ -43,33 +37,31 @@ exports.handler = async (event, context) => {
     
     const { access_token, refresh_token, expires_in } = data.body;
 
-    // Create cookie strings with explicit domain
-    const accessTokenCookie = `spotify_access_token=${access_token}; Path=/; Domain=findyournextjam.netlify.app; HttpOnly; Secure; SameSite=Strict; Max-Age=${expires_in}`;
-    const refreshTokenCookie = `spotify_refresh_token=${refresh_token}; Path=/; Domain=findyournextjam.netlify.app; HttpOnly; Secure; SameSite=Strict; Max-Age=31536000`;
-
-    console.log('Setting cookies with following attributes:', {
-      path: '/',
-      domain: 'findyournextjam.netlify.app',
-      secure: true,
-      sameSite: 'Strict',
-      httpOnly: true
-    });
+    // Create cookie strings with Max-Age
+    const accessTokenCookie = `spotify_access_token=${access_token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${expires_in}`;
+    const refreshTokenCookie = `spotify_refresh_token=${refresh_token}; Path=/; HttpOnly; Secure; SameSite=Lax`;
 
     return {
-      statusCode: 302,
+      statusCode: 200,
       headers: {
         'Set-Cookie': accessTokenCookie + ', ' + refreshTokenCookie,
-        'Location': 'https://findyournextjam.netlify.app',
-        'Cache-Control': 'no-cache'
-      }
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Origin': 'https://findyournextjam.netlify.app'
+      },
+      body: JSON.stringify({ 
+        success: true, 
+        message: 'Authentication successful'
+      })
     };
   } catch (error) {
     console.error('Error in callback:', error);
     return {
-      statusCode: 302,
-      headers: {
-        'Location': 'https://findyournextjam.netlify.app?auth_error=true'
-      }
+      statusCode: 500,
+      body: JSON.stringify({ 
+        error: 'Internal Server Error', 
+        details: error.message,
+        stack: error.stack
+      })
     };
   }
 };
