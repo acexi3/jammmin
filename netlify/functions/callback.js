@@ -14,7 +14,11 @@ exports.handler = async (event, context) => {
     redirectUri: REDIRECT_URI
   });
   console.log('Query parameters:', event.queryStringParameters);
-  console.log('Request origin:', event.headers.origin || event.headers.Origin);
+
+  // Get the origin, with fallback values
+  const origin = event.headers.origin || event.headers.Origin || 'https://findyournextjam.netlify.app';
+  console.log('Request headers:', event.headers);
+  console.log('Using origin:', origin);
 
   const { code } = event.queryStringParameters;
 
@@ -39,15 +43,15 @@ exports.handler = async (event, context) => {
     
     const { access_token, refresh_token, expires_in } = data.body;
 
-    // Create cookie strings with more permissive settings
-    const accessTokenCookie = `spotify_access_token=${access_token}; Path=/; Domain=.netlify.app; HttpOnly; Secure; SameSite=None; Max-Age=${expires_in}`;
-    const refreshTokenCookie = `spotify_refresh_token=${refresh_token}; Path=/; Domain=.netlify.app; HttpOnly; Secure; SameSite=None; Max-Age=31536000`;
+    // Create cookie strings with explicit domain
+    const accessTokenCookie = `spotify_access_token=${access_token}; Path=/; Domain=findyournextjam.netlify.app; HttpOnly; Secure; SameSite=Strict; Max-Age=${expires_in}`;
+    const refreshTokenCookie = `spotify_refresh_token=${refresh_token}; Path=/; Domain=findyournextjam.netlify.app; HttpOnly; Secure; SameSite=Strict; Max-Age=31536000`;
 
     console.log('Setting cookies with following attributes:', {
       path: '/',
-      domain: '.netlify.app',
+      domain: 'findyournextjam.netlify.app',
       secure: true,
-      sameSite: 'None',
+      sameSite: 'Strict',
       httpOnly: true
     });
 
@@ -55,10 +59,10 @@ exports.handler = async (event, context) => {
       statusCode: 200,
       headers: {
         'Set-Cookie': accessTokenCookie + ', ' + refreshTokenCookie,
-        'Access-Control-Allow-Origin': 'https://findyournextjam.netlify.app',
+        'Access-Control-Allow-Origin': origin,
         'Access-Control-Allow-Credentials': 'true',
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Headers': 'Content-Type, Cookie',
         'Cache-Control': 'no-cache'
       },
       body: JSON.stringify({ 
