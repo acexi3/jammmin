@@ -56,30 +56,20 @@ exports.handler = async (event, context) => {
     });
 
     return {
-      statusCode: 200,
+      statusCode: 302,
       headers: {
         'Set-Cookie': accessTokenCookie + ', ' + refreshTokenCookie,
-        'Access-Control-Allow-Origin': origin,
-        'Access-Control-Allow-Credentials': 'true',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Cookie',
+        'Location': 'https://findyournextjam.netlify.app',
         'Cache-Control': 'no-cache'
-      },
-      body: JSON.stringify({ 
-        success: true, 
-        message: 'Authentication successful',
-        cookiesSet: true
-      })
+      }
     };
   } catch (error) {
     console.error('Error in callback:', error);
     return {
-      statusCode: 500,
-      body: JSON.stringify({ 
-        error: 'Internal Server Error', 
-        details: error.message,
-        stack: error.stack
-      })
+      statusCode: 302,
+      headers: {
+        'Location': 'https://findyournextjam.netlify.app?auth_error=true'
+      }
     };
   }
 };
