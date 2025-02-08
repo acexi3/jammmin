@@ -19,8 +19,10 @@ exports.handler = async (event, context) => {
   if (!code) {
     console.log('No code provided');
     return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'Authorization code is missing' })
+      statusCode: 302,  // Changed to redirect
+      headers: {
+        'Location': 'https://findyournextjam.netlify.app?error=no_code'
+      }
     };
   }
 
@@ -42,26 +44,21 @@ exports.handler = async (event, context) => {
     const refreshTokenCookie = `spotify_refresh_token=${refresh_token}; Path=/; HttpOnly; Secure; SameSite=Lax`;
 
     return {
-      statusCode: 200,
+      statusCode: 302,  // Changed to redirect
       headers: {
         'Set-Cookie': accessTokenCookie + ', ' + refreshTokenCookie,
         'Access-Control-Allow-Credentials': 'true',
-        'Access-Control-Allow-Origin': 'https://findyournextjam.netlify.app'
-      },
-      body: JSON.stringify({ 
-        success: true, 
-        message: 'Authentication successful'
-      })
+        'Access-Control-Allow-Origin': 'https://findyournextjam.netlify.app',
+        'Location': 'https://findyournextjam.netlify.app'  // Redirect to main app
+      }
     };
   } catch (error) {
     console.error('Error in callback:', error);
     return {
-      statusCode: 500,
-      body: JSON.stringify({ 
-        error: 'Internal Server Error', 
-        details: error.message,
-        stack: error.stack
-      })
+      statusCode: 302,  // Changed to redirect
+      headers: {
+        'Location': 'https://findyournextjam.netlify.app?error=auth_failed'
+      }
     };
   }
 };
