@@ -38,22 +38,18 @@ exports.handler = async (event, context) => {
     
     const { access_token, refresh_token, expires_in } = data.body;
 
-    // Set cookies with appropriate domain
-    const cookieOptions = {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'Lax',  // Changed from 'Strict' to 'Lax'
-      path: '/',
-      maxAge: expires_in * 1000
-    };
+    // Create cookie strings
+    const accessTokenCookie = `spotify_access_token=${access_token}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=${expires_in}`;
+    const refreshTokenCookie = `spotify_refresh_token=${refresh_token}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=31536000`; // 1 year
+
+    console.log('Setting cookies');
 
     return {
       statusCode: 200,
       headers: {
-        'Set-Cookie': [
-          `spotify_access_token=${access_token}; ${Object.entries(cookieOptions).map(([k, v]) => `${k}=${v}`).join('; ')}`,
-          `spotify_refresh_token=${refresh_token}; ${Object.entries(cookieOptions).map(([k, v]) => `${k}=${v}`).join('; ')}`
-        ]
+        'Set-Cookie': accessTokenCookie + ', ' + refreshTokenCookie,
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Origin': 'https://findyournextjam.netlify.app'
       },
       body: JSON.stringify({ 
         success: true, 
