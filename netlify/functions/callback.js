@@ -14,6 +14,7 @@ exports.handler = async (event, context) => {
     redirectUri: REDIRECT_URI
   });
   console.log('Query parameters:', event.queryStringParameters);
+  console.log('Request origin:', event.headers.origin || event.headers.Origin);
 
   const { code } = event.queryStringParameters;
 
@@ -38,22 +39,32 @@ exports.handler = async (event, context) => {
     
     const { access_token, refresh_token, expires_in } = data.body;
 
-    // Create cookie strings
-    const accessTokenCookie = `spotify_access_token=${access_token}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=${expires_in}`;
-    const refreshTokenCookie = `spotify_refresh_token=${refresh_token}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=31536000`; // 1 year
+    // Create cookie strings with more permissive settings
+    const accessTokenCookie = `spotify_access_token=${access_token}; Path=/; Domain=.netlify.app; HttpOnly; Secure; SameSite=None; Max-Age=${expires_in}`;
+    const refreshTokenCookie = `spotify_refresh_token=${refresh_token}; Path=/; Domain=.netlify.app; HttpOnly; Secure; SameSite=None; Max-Age=31536000`;
 
-    console.log('Setting cookies');
+    console.log('Setting cookies with following attributes:', {
+      path: '/',
+      domain: '.netlify.app',
+      secure: true,
+      sameSite: 'None',
+      httpOnly: true
+    });
 
     return {
       statusCode: 200,
       headers: {
         'Set-Cookie': accessTokenCookie + ', ' + refreshTokenCookie,
+        'Access-Control-Allow-Origin': 'https://findyournextjam.netlify.app',
         'Access-Control-Allow-Credentials': 'true',
-        'Access-Control-Allow-Origin': 'https://findyournextjam.netlify.app'
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Cache-Control': 'no-cache'
       },
       body: JSON.stringify({ 
         success: true, 
-        message: 'Authentication successful'
+        message: 'Authentication successful',
+        cookiesSet: true
       })
     };
   } catch (error) {
